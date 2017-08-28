@@ -17,9 +17,8 @@ int main (int argc, char** argv) {
 	cout << "Please enter 2 numbers you want to muliply" << endl;
 	cout << ":: ";
 	cin >> var1;
-	cout << endl << ":: ";
+	cout << ":: ";
 	cin >> var2;
-	cout << endl;
 	
 	ull ans = doKM(var1, var2);
 	
@@ -30,25 +29,33 @@ int main (int argc, char** argv) {
 
 ull doKM (const ull var1, const ull var2) {
 	// get half sie
-	int halfSize = std::to_string(var1).length();
+	int l1 = std::to_string(var1).length();
+	int l2 = std::to_string(var2).length();
 	
-	if(halfSize < 10) {
+	if(l1 == 1 || l2 == 1) {
 		return var1 * var2;
 	}
 	
-	ull a = var1 / (10 * halfSize), b = var1 % (10 * halfSize);
-	ull c = var2 / (10 * halfSize), d = var2 % (10 * halfSize);
+	int halfSize = std::max(l1, l2) / 2;
 	
-	/*ull ac = a * c; // Call Karatsuba again for both these
-	ull bd = b * d;*/
-	ull ac = doKM(a, c);
-	ull bd = doKM(b, d);
+	ull a = var1 / pow10(halfSize), b = var1 % pow10(halfSize);
+	ull c = var2 / pow10(halfSize), d = var2 % pow10(halfSize);
 	
-	ull foil = doKM(a + b, c + d);
+	ull ac = a * c; // Call Karatsuba again for both these
+	ull bd = b * d;
+	//ull ac = doKM(a, c);
+	//ull bd = doKM(b, d);
+	
+	ull foil = (a + b) * (c + d);
+	//ull foil = doKM(a + b, c + d);
 	
 	ull sub = foil - bd - ac;
 	
 	return sub;
 	
 	
+}
+
+ull pow10 (const int power) {
+	return pow(10, power);
 }
