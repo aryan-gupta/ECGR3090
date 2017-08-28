@@ -1,11 +1,12 @@
 
 #include <iostream>
 #include <string>
+#include <cmath>
 
 typedef unsigned long long ull;
 
 ull doKM (const ull var1, const ull var2);
-
+ull pow10(const int power);
 
 int main (int argc, char** argv) {
 	using std::cout;
@@ -57,5 +58,5 @@ ull doKM (const ull var1, const ull var2) {
 }
 
 ull pow10 (const int power) {
-	return pow(10, power);
+	return std::pow(10, power);
 }
