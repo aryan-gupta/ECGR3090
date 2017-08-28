@@ -2,11 +2,12 @@
 #include <iostream>
 #include <string>
 
-typedef ull unsigned long long;
+typedef unsigned long long ull;
 
 ull doKM (const ull var1, const ull var2);
 
-void main (int argc, char** argv) {
+
+int main (int argc, char** argv) {
 	using std::cout;
 	using std::cin;
 	using std::endl;
@@ -23,19 +24,31 @@ void main (int argc, char** argv) {
 	ull ans = doKM(var1, var2);
 	
 	cout << "The answer is " << ans << endl;
+	
+	return 0;
 }
 
 ull doKM (const ull var1, const ull var2) {
-	std::string x = std::to_string(var1), y = std::to_string(var2);
-	ull a = var1 / (10 * x.length()), b = var1 % (10 * x.length());
-	ull c = var2 / (10 * y.length()), d = var2 % (10 * y.length());
+	// get half sie
+	int halfSize = std::to_string(var1).length();
 	
-	ull ac = a * b;
-	ull bd = c * d;
+	if(halfSize < 10) {
+		return var1 * var2;
+	}
 	
-	ull foil = (a + b) * (c + d);
+	ull a = var1 / (10 * halfSize), b = var1 % (10 * halfSize);
+	ull c = var2 / (10 * halfSize), d = var2 % (10 * halfSize);
 	
-	uul sub = foil - bd - ac;
+	/*ull ac = a * c; // Call Karatsuba again for both these
+	ull bd = b * d;*/
+	ull ac = doKM(a, c);
+	ull bd = doKM(b, d);
+	
+	ull foil = doKM(a + b, c + d);
+	
+	ull sub = foil - bd - ac;
+	
+	return sub;
 	
 	
 }
