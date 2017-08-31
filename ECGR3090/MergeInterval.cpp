@@ -7,6 +7,14 @@ This is because the new interval [4,9] overlaps with [3,5],[6,7],[8,10]. Make su
 
 Use the following test program -*/
 
+/*	Pesudo
+
+find where lower digit fits
+find last digit fits
+squash all intervals in between
+
+*/
+
  
 
 
