@@ -21,6 +21,7 @@ squash all intervals in between
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <pair>
 
 using namespace std;
 
@@ -66,35 +67,16 @@ int main()
 }
 
 vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
-	// fix pre case: newInterval is lower then smalles interval
-	// if (newInterval.start < intervals[0].start) {
-		// intervals[0].start = newInterval.start;
-	// }
 	
-	// if (newInterval.end > (++intervals.rend())->end) {
-		// intervals.rend()->end = newInterval.end;
-	// }
-	
-	bool remove = false;
 	vector<Interval>::iterator start;
+	bool remove = false;
 	
-	intervals.erase(
-		remove_if(
-			intervals.begin(),
-			intervals.end(),
-			[&](const Interval& a){
-				if (newInterval.start < a.start and newInterval.end > a.end)
-					return true;
-				else
-					return false;
-			}
-		), 
-		intervals.end()
-	);
-	
-	// we have removed all the inbetween intervals, now fix the intervals
-	//start->end = (start + 1)->end;
-	//intervals.erase(start + 1);
+	for (auto i = internals.begin(); i != intervals.end(); ++i) {
+		if (!remove and newInterval.start < i->start and newInterval.end > i->end) {
+			remove = true;
+			start = i;
+		}
+	}
 	
 	return intervals;
 }
