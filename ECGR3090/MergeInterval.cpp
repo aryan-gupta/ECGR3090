@@ -67,10 +67,22 @@ int main()
 
 vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
 	
-	bool remove = false;
-	decltype(Interval::start) last;
+	if (newInterval.end < intervals[0].start) { // Interval before all
+		intervals.insert(intervals.begin(), newInterval);
+		return intervals;
+	} else if (newInterval.start > (--intervals.end())->end) { // interval after all
+		intervals.push_back(newInterval);
+		return intervals;
+	}
 	
-	for (auto i = intervals.begin(); i != intervals.end(); ++i) {	
+	bool remove = false;
+	
+	for (auto i = intervals.begin(); i != intervals.end(); ++i) {
+		if (i != intervals.begin() and newInterval.end < i->start and newInterval.start > (i - 1)->end) { // Whole interval is inbetween
+			intervals.insert(i, newInterval);
+			break;
+		}
+	
 		if (remove and newInterval.end < i->end and newInterval.end > i->start) { // found end num in an interval
 			(i - 1)->end = i->end;
 			intervals.erase(i);
@@ -85,16 +97,18 @@ vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
 		
 		if (remove) {
 			intervals.erase(i--); // subtract one to account shift in one
+			continue;
 		}
 		
 		if (!remove and newInterval.start < i->start and newInterval.end > i->end) { // found start num inbetween two intervals
 			i->start = newInterval.start; // pull start to new start
+			continue;
 		}
 		
 		if (!remove and newInterval.start < i->end and newInterval.start > i->start) { // found start num in an interval
 			remove = true;
+			continue;
 		}
-		
 	}
 	
 	return intervals;
