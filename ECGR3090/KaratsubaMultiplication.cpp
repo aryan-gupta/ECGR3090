@@ -49,13 +49,10 @@ ull doKM (const ull var1, const ull var2) {
 	ull a = var1 >> halfSize, b = var1 % (1 << halfSize); // TODO Make b and d better
 	ull c = var2 >> halfSize, d = var2 % (1 << halfSize);
 	
-	ull ac = a * c; // Call Karatsuba again for both these
-	ull bd = b * d;
-	//ull ac = doKM(a, c);
-	//ull bd = doKM(b, d);
-	
-	ull foil = (a + b) * (c + d);
-	//ull foil = doKM(a + b, c + d);
+	ull ac = doKM(a, c);
+	ull bd = doKM(b, d);
+
+	ull foil = doKM(a + b, c + d);
 	
 	ull sub = foil - bd - ac;
 	
