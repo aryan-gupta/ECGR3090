@@ -21,7 +21,6 @@ squash all intervals in between
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <pair>
 
 using namespace std;
 
@@ -68,13 +67,37 @@ int main()
 
 vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
 	
-	vector<Interval>::iterator start;
 	bool remove = false;
+	decltype(Interval::start) last;
 	
-	for (auto i = internals.begin(); i != intervals.end(); ++i) {
-		if (!remove and newInterval.start < i->start and newInterval.end > i->end) {
+	for (auto i = intervals.begin(); i != intervals.end(); ++i) {	
+		if (remove) {
+			intervals.erase(i);
+		}
+		
+		// if (!remove and newInterval.start < i->start) { // found start num inbetween two intervals
+			// (i--)->start = newInterval.start; // pull start to new start go back one to recheck the final bound
+		// }
+		
+		if (!remove and newInterval.start < i->end and newInterval.start > i->start) { // found start num in an interval
 			remove = true;
-			start = i;
+		}
+		
+		if (
+					remove 
+				and i != (intervals.end() - 1) 
+				and newInterval.end < (i + 1)->start
+				and newInterval.end > i->end
+			) { // found end num inbetween two interval
+			cout << "Here" << endl;
+			i->end = newInterval.end;
+			break;
+		}
+		
+		if (remove and newInterval.end < i->end and newInterval.end > i->start) { // found end num in an interval
+			(i - 1)->end = i->end;
+			intervals.erase(i);
+			break;
 		}
 	}
 	
