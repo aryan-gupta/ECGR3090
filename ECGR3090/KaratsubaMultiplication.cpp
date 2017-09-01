@@ -36,7 +36,7 @@ int main (int argc, char** argv) {
 }
 
 ull doKM (const ull var1, const ull var2) {
-	// get half sie
+	// get half size
 	size_t len1 = getLength(var1);
 	size_t len2 = getLength(var2);
 	
@@ -46,8 +46,17 @@ ull doKM (const ull var1, const ull var2) {
 	
 	size_t halfSize = std::max(len1, len2) / 2;
 	
-	ull a = var1 >> halfSize, b = var1 % (1 << halfSize); // TODO Make b and d better
-	ull c = var2 >> halfSize, d = var2 % (1 << halfSize);
+	/* bitmask operation
+		The code is pretty much getting a bunch of 1's with the size of halfSize
+		EX. If halfSize = 4 -- (0b00001111)
+		1 << halfSize = 0b00010000
+		$_ - 1 = 0b00001111
+	*/
+	ull a = var1 >> halfSize, // get first set of digits
+		b = var1 & ((1 << halfSize) - 1), // second set of digits (\sa bitmask operation)
+		
+		c = var2 >> halfSize,
+		d = var2 & ((1 << halfSize) - 1);
 	
 	ull ac = doKM(a, c);
 	ull bd = doKM(b, d);
@@ -59,7 +68,6 @@ ull doKM (const ull var1, const ull var2) {
 	ull ans = (ac << (halfSize * 2)) + bd + (sub << halfSize);
 	
 	return ans;
-	
 	
 }
 
