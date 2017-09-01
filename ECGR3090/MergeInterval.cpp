@@ -71,20 +71,8 @@ vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
 	decltype(Interval::start) last;
 	
 	for (auto i = intervals.begin(); i != intervals.end(); ++i) {	
-		if (remove) {
-			intervals.erase(i);
-		}
-		
-		// if (!remove and newInterval.start < i->start) { // found start num inbetween two intervals
-			// (i--)->start = newInterval.start; // pull start to new start go back one to recheck the final bound
-		// }
-		
-		if (!remove and newInterval.start < i->end and newInterval.start > i->start) { // found start num in an interval
-			remove = true;
-		}
-		
 		if (
-					remove 
+				remove 
 				and i != (intervals.end() - 1) 
 				and newInterval.end < (i + 1)->start
 				and newInterval.end > i->end
@@ -99,6 +87,19 @@ vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
 			intervals.erase(i);
 			break;
 		}
+	
+		if (remove) {
+			intervals.erase(i);
+		}
+		
+		if (!remove and newInterval.start < i->start) { // found start num inbetween two intervals
+			i->start = newInterval.start; // pull start to new start go back one to recheck the final bound
+		}
+		
+		if (!remove and newInterval.start < i->end and newInterval.start > i->start) { // found start num in an interval
+			remove = true;
+		}
+		
 	}
 	
 	return intervals;
