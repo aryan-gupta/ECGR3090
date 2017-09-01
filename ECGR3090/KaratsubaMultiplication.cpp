@@ -5,8 +5,14 @@
 
 typedef unsigned long long ull;
 
+namespace me {
+	ull pow10 (ull power);
+	
+	template <typename T> max (T a, T b);
+	
+}
+
 ull doKM (const ull var1, const ull var2);
-ull pow10(const int power);
 
 int main (int argc, char** argv) {
 	using std::cout;
@@ -57,6 +63,11 @@ ull doKM (const ull var1, const ull var2) {
 	
 }
 
-ull pow10 (const int power) {
-	return std::pow(10, power);
+namespace me {
+	ull pow10 (ull power) {
+		ull ans = 10;
+		for (; power > 0; --power) {
+			ans *= 10;
+		}
+	}
 }
