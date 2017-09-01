@@ -6,13 +6,14 @@
 typedef unsigned long long ull;
 
 namespace me {
-	ull pow10 (ull power);
+	// ull pow10 (ull power);
 	
-	template <typename T> max (T a, T b);
+	// template <typename T> T max (T a, T b);
 	
 }
 
 ull doKM (const ull var1, const ull var2);
+size_t getLength (ull a);
 
 int main (int argc, char** argv) {
 	using std::cout;
@@ -36,17 +37,17 @@ int main (int argc, char** argv) {
 
 ull doKM (const ull var1, const ull var2) {
 	// get half sie
-	int l1 = std::to_string(var1).length();
-	int l2 = std::to_string(var2).length();
+	size_t len1 = getLength(var1);
+	size_t len2 = getLength(var2);
 	
-	if(l1 == 1 || l2 == 1) {
+	if(len1 == 1 || len2 == 1) {
 		return var1 * var2;
 	}
 	
-	int halfSize = std::max(l1, l2) / 2;
+	size_t halfSize = std::max(len1, len2) / 2;
 	
-	ull a = var1 / pow10(halfSize), b = var1 % pow10(halfSize);
-	ull c = var2 / pow10(halfSize), d = var2 % pow10(halfSize);
+	ull a = var1 >> halfSize, b = var1 % (1 << halfSize); // TODO Make b and d better
+	ull c = var2 >> halfSize, d = var2 % (1 << halfSize);
 	
 	ull ac = a * c; // Call Karatsuba again for both these
 	ull bd = b * d;
@@ -58,9 +59,19 @@ ull doKM (const ull var1, const ull var2) {
 	
 	ull sub = foil - bd - ac;
 	
-	return sub;
+	ull ans = (ac << (halfSize * 2)) + bd + (sub << halfSize);
+	
+	return ans;
 	
 	
+}
+
+size_t getLength (ull a) {
+	size_t len = 0;
+	while ((a = a >> 1) != 0) {
+		++len;
+	}
+	return ++len;
 }
 
 namespace me {
