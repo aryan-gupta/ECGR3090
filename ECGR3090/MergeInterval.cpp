@@ -63,3 +63,30 @@ int main()
     
     return 0;
 }
+
+vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
+	bool remove = false;
+	vector<Interval>::iterator start;
+	for (vector<Interval>::iterator i = intervals.begin(); i != intervals.end(); ++i) {		
+		if (newInterval.end < i->end and newInterval.end > i->start) {
+			// found the final element 
+			break; // no need to check the rest
+		}
+		
+		if (remove) {
+			intervals.erase(i--); // remove index and reset i
+		}
+		
+		if (newInterval.start < i->end and newInterval.start > i->start) {
+			// found the first inverval
+			start = i; // store the first interval for later use
+			remove = true;
+		} // else { ++i }
+	}
+	
+	// we have removed all the inbetween intervals, now fix the intervals
+	start->end = (start + 1)->end;
+	intervals.erase(start + 1);
+	
+	return intervals;
+}
