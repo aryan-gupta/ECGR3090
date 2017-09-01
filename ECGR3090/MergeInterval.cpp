@@ -20,6 +20,7 @@ squash all intervals in between
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -66,45 +67,30 @@ int main()
 
 vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
 	// fix pre case: newInterval is lower then smalles interval
-	if (newInterval.start < intervals[0].start) {
-		intervals[0].start = newInterval.start;
-	}
+	// if (newInterval.start < intervals[0].start) {
+		// intervals[0].start = newInterval.start;
+	// }
 	
-	if (newInterval.end > --intervals.rend()->end) {
-		intervals.rend()->end = newInterval.end;
-	}
+	// if (newInterval.end > (++intervals.rend())->end) {
+		// intervals.rend()->end = newInterval.end;
+	// }
 	
 	bool remove = false;
 	vector<Interval>::iterator start;
 	
-	for (vector<Interval>::iterator i = intervals.begin(); i != intervals.end(); ++i) {		
-		// check if start is not in any interval
-		if (i != intervals.begin() and newInterval.start > (i - 1)->end and newInterval.start < i->start) {
-			// the new interval isnt in any preexisting interval
-			i->start = newInterval.start; // lower the bound for the pre existing interval
-		}
-		
-		if (newInterval.end < i->end and newInterval.end > i->start) {
-			// found the final element 
-			break; // no need to check the rest
-		}
-		
-		if (remove) {
-			intervals.erase(i--); // remove index and reset i
-		}
-		
-		if (i != --intervals.end() and newInterval.end < (i + 1)->start and newInterval.end > i->end) {
-			// the new interval isnt in any preexisting interval
-			i->end = newInterval.end; // lower the bound for the pre existing interval
-		}
-		
-		// doing this after the check so we dont have to increment i
-		if (newInterval.start < i->end and newInterval.start > i->start) {
-			// found the first inverval
-			start = i; // store the first interval for later use
-			remove = true;
-		}
-	}
+	intervals.erase(
+		remove_if(
+			intervals.begin(),
+			intervals.end(),
+			[&](const Interval& a){
+				if (newInterval.start < a.start and newInterval.end > a.end)
+					return true;
+				else
+					return false;
+			}
+		), 
+		intervals.end()
+	);
 	
 	// we have removed all the inbetween intervals, now fix the intervals
 	//start->end = (start + 1)->end;
