@@ -6,10 +6,7 @@
 typedef unsigned long long ull;
 
 namespace me {
-	// ull pow10 (ull power);
-	
-	// template <typename T> T max (T a, T b);
-	
+	template <typename T> T max (T a, T b);
 }
 
 ull doKM (const ull var1, const ull var2);
@@ -44,7 +41,7 @@ ull doKM (const ull var1, const ull var2) {
 		return var1 * var2;
 	}
 	
-	size_t halfSize = std::max(len1, len2) / 2;
+	size_t halfSize = me::max(len1, len2) / 2;
 	
 	/* bitmask operation
 		The code is pretty much getting a bunch of 1's with the size of halfSize
@@ -80,10 +77,8 @@ size_t getLength (ull a) {
 }
 
 namespace me {
-	ull pow10 (ull power) {
-		ull ans = 10;
-		for (; power > 0; --power) {
-			ans *= 10;
-		}
+	template <typename T>
+	T max (T a, T b) {
+		return (a > b)? a : b;
 	}
 }
