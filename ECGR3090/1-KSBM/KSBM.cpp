@@ -8,7 +8,7 @@ using std::endl;
 #include <bitset>	
 
 typedef unsigned long long ull;
-const size_t MAX_BIT = 20;
+const size_t MAX_BIT = 64;
 
 
 namespace me {
@@ -18,9 +18,12 @@ namespace me {
 std::bitset<MAX_BIT> karatsuba (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
 std::bitset<MAX_BIT> add (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
 std::bitset<MAX_BIT> sub (const std::bitset<MAX_BIT>& x, std::bitset<MAX_BIT> y);
-std::bitset<MAX_BIT> str2bitset(std::string str);
+std::bitset<MAX_BIT> str2bitset (std::string str);
 void db2 (std::string& str);
+std::string bitset2str (std::bitset<MAX_BIT> bit);
 size_t getLength (std::bitset<MAX_BIT> a);
+void mb2 (std::string& str);
+std::string bitset2str (std::bitset<MAX_BIT> bit);
 
 int main (int argc, char** argv) {
 	std::string var1, var2;
@@ -39,8 +42,8 @@ int main (int argc, char** argv) {
 	
 	std::bitset<MAX_BIT> ans = karatsuba (x, y);
 	
-	//cout << "The answer is " << bitset2str(ans) << endl;
-	cout << "The answer is " << ans.to_ulong() << endl;
+	cout << "The answer is " << bitset2str(ans) << endl;
+	// cout << "The answer is " << ans.to_ullong() << endl;
 	
 	return 0;
 }
@@ -75,17 +78,20 @@ void db2 (std::string& str) {
 std::bitset<MAX_BIT> karatsuba (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y) {
 	using std::bitset;
 	
+	bitset<MAX_BIT> ans;
+	
 	size_t len1 = getLength(x);
 	size_t len2 = getLength(y);
 	
-	// if(len1 == 1 || len2 == 1) {
-		// return x * y;
-	// }
+	if (len1 <= 1 || len2 <= 1) {
+		ans = x.to_ullong() * y.to_ullong();
+		return ans;
+	}
 	
 	size_t halfSize = me::max(len1, len2) / 2;
 	
 	bitset<MAX_BIT> halfMask;
-	for (int i = halfSize - 1; i != -1; --i) {
+	for (int i = halfSize - 1; i >= 0; --i) {
 		halfMask.set(i, 1);
 	}
 	
@@ -95,14 +101,14 @@ std::bitset<MAX_BIT> karatsuba (const std::bitset<MAX_BIT>& x, const std::bitset
 	bitset<MAX_BIT> c = y >> halfSize;
 	bitset<MAX_BIT> d = y & halfMask;
 	
-	bitset<MAX_BIT> ac = a.to_ulong() * c.to_ulong();
-	bitset<MAX_BIT> bd = b.to_ulong() * d.to_ulong();
+	bitset<MAX_BIT> ac = karatsuba(a, c);
+	bitset<MAX_BIT> bd = karatsuba(b, d);
 	
-	bitset<MAX_BIT> foil = add(a, b).to_ulong() * add(c, d).to_ulong();
+	bitset<MAX_BIT> foil = karatsuba(add(a, b), add(c, d));
 	
 	bitset<MAX_BIT> subt = sub(sub(foil, bd), ac);
 	
-	bitset<MAX_BIT> ans = add(add((ac << (halfSize * 2)), bd), (subt << halfSize));
+	ans = add(add((ac << (halfSize * 2)), bd), (subt << halfSize));
 	
 	return ans;
 	
@@ -116,6 +122,33 @@ size_t getLength (std::bitset<MAX_BIT> a) {
 		len++;
 	}
 	return len;
+}
+
+
+void mb2 (std::string& str) {
+	unsigned carry = 0;
+	for (int i = str.length() - 1; i >= 0; --i) {
+		unsigned ch = str[i] - '0';
+		ch = ch * 2 + carry;
+		if (ch > 9) {
+			carry = 1;
+			ch = ch % 10;
+		} else carry = 0;
+		str[i] = ch + '0';
+	}
+	
+	if (carry != 0)
+		str.insert(str.begin(), carry + '0');
+}
+
+std::string bitset2str (std::bitset<MAX_BIT> bit) {
+	std::string str = "0";
+	for (int i = getLength(bit) - 1; i >= 0; --i) {
+		mb2 (str);
+		str[str.length() - 1] += bit[i];
+		// cout << str << endl;
+	}
+	return str;
 }
 
 namespace me {
