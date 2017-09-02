@@ -8,7 +8,7 @@ using std::endl;
 #include <bitset>	
 
 typedef unsigned long long ull;
-const size_t MAX_BIT = 64;
+const size_t MAX_BIT = 10000;
 
 
 namespace me {
@@ -28,7 +28,7 @@ std::string bitset2str (std::bitset<MAX_BIT> bit);
 int main (int argc, char** argv) {
 	std::string var1, var2;
 	
-	cout << "Please enter 2 numbers you want to muliply" << endl;
+	cout << "Please enter 2 numbers you want to muliply. Current limit of answer is (2^10000 - 1)" << endl;
 	cout << ":: ";
 	cin >> var1;
 	cout << ":: ";
