@@ -1,3 +1,11 @@
+/**
+*** Name:		Aryan Gupta
+*** 800#:		800963490
+*** Assignment: Karatsuba Multiplication
+*** Class:		ECGR3090
+*** Brief:		This code multiplies 2 numbers together. The answer has a theoretical limit of 2^MAX_BIT - 1
+**/
+
 
 #include <iostream>
 using std::cout;
@@ -21,45 +29,38 @@ std::bitset<MAX_BIT> sub (const std::bitset<MAX_BIT>& x, std::bitset<MAX_BIT> y)
 std::bitset<MAX_BIT> str2bitset (std::string str);
 void db2 (std::string& str);
 std::string bitset2str (std::bitset<MAX_BIT> bit);
-size_t getLength (std::bitset<MAX_BIT> a);
 void mb2 (std::string& str);
-std::string bitset2str (std::bitset<MAX_BIT> bit);
+size_t getLength (std::bitset<MAX_BIT> a);
 
 int main (int argc, char** argv) {
 	std::string var1, var2;
 	
-	cout << "Please enter 2 numbers you want to muliply. Current limit of answer is (2^10000 - 1)" << endl;
+	cout << "Please enter 2 numbers you want to muliply. Current limit of answer is (2^" << MAX_BIT << " - 1)" << endl;
 	cout << ":: ";
 	cin >> var1;
 	cout << ":: ";
 	cin >> var2;
 	
-	std::bitset<MAX_BIT> x = str2bitset(var1);
-	// cout << x.to_string() << endl;
-	
+	std::bitset<MAX_BIT> x = str2bitset(var1); // convert both numbers string to binary bitset
 	std::bitset<MAX_BIT> y = str2bitset(var2);
-	// cout << y.to_string() << endl;
 	
-	std::bitset<MAX_BIT> ans = karatsuba (x, y);
+	std::bitset<MAX_BIT> ans = karatsuba(x, y); // do the karatsuba multiplication
 	
-	cout << "The answer is " << bitset2str(ans) << endl;
-	// cout << "The answer is " << ans.to_ullong() << endl;
-	
+	cout << "The answer is " << bitset2str(ans) << endl; // convert it back to a string and output the answer
 	return 0;
 }
 
-std::bitset<MAX_BIT> str2bitset(std::string str) {
+std::bitset<MAX_BIT> str2bitset (std::string str) {
 	std::bitset<MAX_BIT> ret;
 	size_t idx = 0;
 	while (str != "") {
 		ret[idx++] = (str[str.length() - 1] - '0') % 2;
 		db2(str);
-		// cout << str << endl;
 	}
 	return ret;
 }
 
-void db2 (std::string& str) {
+void db2 (std::string& str) { // https://stackoverflow.com/questions/11006844
 	int nadd = 0;
 	for (char& ch : str) {
 		int add = nadd;
@@ -78,25 +79,28 @@ void db2 (std::string& str) {
 std::bitset<MAX_BIT> karatsuba (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y) {
 	using std::bitset;
 	
-	bitset<MAX_BIT> ans;
-	
 	size_t len1 = getLength(x);
 	size_t len2 = getLength(y);
 	
 	if (len1 <= 1 || len2 <= 1) {
-		ans = x.to_ullong() * y.to_ullong();
-		return ans;
+		// Current limitation prevents 2 binary number that are
+		// 64 times larger than the other from being multiplied
+		// by each other. This is 'cause the larger number cant
+		// fit into a ull (64 bits) when the other number will 
+		// probebly be a single bit number. (The factor is machine
+		// dependent)
+		return x.to_ullong() * y.to_ullong(); // multiply it normallt if either one of them is single bit
 	}
 	
 	size_t halfSize = me::max(len1, len2) / 2;
 	
-	bitset<MAX_BIT> halfMask;
+	bitset<MAX_BIT> halfMask; // get bitmask for the second half of the digits
 	for (int i = halfSize - 1; i >= 0; --i) {
 		halfMask.set(i, 1);
 	}
 	
 	bitset<MAX_BIT> a = x >> halfSize; // get first set of digits
-	bitset<MAX_BIT> b = x & halfMask; // second set of digits (\sa bitmask operation)
+	bitset<MAX_BIT> b = x & halfMask; // second set of digits (\sa bitmasking)
 	
 	bitset<MAX_BIT> c = y >> halfSize;
 	bitset<MAX_BIT> d = y & halfMask;
@@ -104,21 +108,18 @@ std::bitset<MAX_BIT> karatsuba (const std::bitset<MAX_BIT>& x, const std::bitset
 	bitset<MAX_BIT> ac = karatsuba(a, c);
 	bitset<MAX_BIT> bd = karatsuba(b, d);
 	
-	bitset<MAX_BIT> foil = karatsuba(add(a, b), add(c, d));
+	bitset<MAX_BIT> foil = karatsuba(add(a, b), add(c, d)); // (a + b) * (c + d)
 	
-	bitset<MAX_BIT> subt = sub(sub(foil, bd), ac);
+	bitset<MAX_BIT> subt = sub(sub(foil, bd), ac); // foil - bd - ac
 	
-	ans = add(add((ac << (halfSize * 2)), bd), (subt << halfSize));
-	
-	return ans;
+	return add(add((ac << (halfSize * 2)), bd), (subt << halfSize)); // (ac << (halfSize * 2)) + bd + (subt << halfSize)
 	
 }
 
 size_t getLength (std::bitset<MAX_BIT> a) {
 	size_t len = 0;
 	while (a.to_string().find("1") != std::string::npos) {
-		// cout << a.to_string() << endl;
-		a >>= 1;
+		a >>= 1; // bit shift right until it equalls 0
 		len++;
 	}
 	return len;
@@ -126,7 +127,7 @@ size_t getLength (std::bitset<MAX_BIT> a) {
 
 
 void mb2 (std::string& str) {
-	unsigned carry = 0;
+	unsigned carry = 0; // this is digit by digit multiplication
 	for (int i = str.length() - 1; i >= 0; --i) {
 		unsigned ch = str[i] - '0';
 		ch = ch * 2 + carry;
@@ -144,14 +145,13 @@ void mb2 (std::string& str) {
 std::string bitset2str (std::bitset<MAX_BIT> bit) {
 	std::string str = "0";
 	for (int i = getLength(bit) - 1; i >= 0; --i) {
-		mb2 (str);
+		mb2 (str); // multiply numerical string by 2
 		str[str.length() - 1] += bit[i];
-		// cout << str << endl;
 	}
 	return str;
 }
 
-namespace me {
+namespace me { // not using std::max
 	template <typename T>
 	T max (T a, T b) {
 		return (a > b)? a : b;
@@ -159,7 +159,7 @@ namespace me {
 }
 
 std::bitset<MAX_BIT> sub (const std::bitset<MAX_BIT>& x, std::bitset<MAX_BIT> y) {
-	y.flip();	
+	y.flip(); // 2's complement 
 	return add(add(x, y), 1);
 }
 
