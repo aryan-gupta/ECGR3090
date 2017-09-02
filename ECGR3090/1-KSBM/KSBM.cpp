@@ -1,8 +1,11 @@
 
 #include <iostream>
+using std::cout;
+using std::cin;
+using std::endl;
 #include <string>
 #include <cmath>
-#include <bitset>
+#include <bitset>	
 
 typedef unsigned long long ull;
 const size_t MAX_BIT = 20;
@@ -12,15 +15,14 @@ namespace me {
 	template <typename T> T max (T a, T b);
 }
 
-ull karatsuba (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
+std::bitset<MAX_BIT> karatsuba (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
+std::bitset<MAX_BIT> add (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
+std::bitset<MAX_BIT> sub (const std::bitset<MAX_BIT>& x, std::bitset<MAX_BIT> y);
 std::bitset<MAX_BIT> str2bitset(std::string str);
 void db2 (std::string& str);
+size_t getLength (std::bitset<MAX_BIT> a);
 
 int main (int argc, char** argv) {
-	using std::cout;
-	using std::cin;
-	using std::endl;
-	
 	std::string var1, var2;
 	
 	cout << "Please enter 2 numbers you want to muliply" << endl;
@@ -35,10 +37,10 @@ int main (int argc, char** argv) {
 	std::bitset<MAX_BIT> y = str2bitset(var2);
 	// cout << y.to_string() << endl;
 	
-	exit(0);
 	std::bitset<MAX_BIT> ans = karatsuba (x, y);
 	
 	//cout << "The answer is " << bitset2str(ans) << endl;
+	cout << "The answer is " << ans.to_ulong() << endl;
 	
 	return 0;
 }
@@ -70,41 +72,50 @@ void db2 (std::string& str) {
 	}
 }
 
-ull karatsuba (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y) {
-	const ull var1 = 12; const ull var2 = 12;
-	// get half size
-	size_t len1 = 0; //getLength(var1);
-	size_t len2 = 0; //getLength(var2);
+std::bitset<MAX_BIT> karatsuba (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y) {
+	using std::bitset;
 	
-	if(len1 == 1 || len2 == 1) {
-		return var1 * var2;
-	}
+	size_t len1 = getLength(x);
+	size_t len2 = getLength(y);
+	
+	// if(len1 == 1 || len2 == 1) {
+		// return x * y;
+	// }
 	
 	size_t halfSize = me::max(len1, len2) / 2;
 	
-	/* bitmask operation
-		The code is pretty much getting a bunch of 1's with the size of halfSize
-		EX. If halfSize = 4 -- (0b00001111)
-		1 << halfSize = 0b00010000
-		$_ - 1 = 0b00001111
-	*/
-	ull a = var1 >> halfSize, // get first set of digits
-		b = var1 & ((1 << halfSize) - 1), // second set of digits (\sa bitmask operation)
-		
-		c = var2 >> halfSize,
-		d = var2 & ((1 << halfSize) - 1);
+	bitset<MAX_BIT> halfMask;
+	for (int i = halfSize - 1; i != -1; --i) {
+		halfMask.set(i, 1);
+	}
 	
-	ull ac = karatsuba (a, c);
-	ull bd = karatsuba (b, d);
-
-	ull foil = karatsuba (a + b, c + d);
+	bitset<MAX_BIT> a = x >> halfSize; // get first set of digits
+	bitset<MAX_BIT> b = x & halfMask; // second set of digits (\sa bitmask operation)
 	
-	ull sub = foil - bd - ac;
+	bitset<MAX_BIT> c = y >> halfSize;
+	bitset<MAX_BIT> d = y & halfMask;
 	
-	ull ans = (ac << (halfSize * 2)) + bd + (sub << halfSize);
+	bitset<MAX_BIT> ac = a.to_ulong() * c.to_ulong();
+	bitset<MAX_BIT> bd = b.to_ulong() * d.to_ulong();
+	
+	bitset<MAX_BIT> foil = add(a, b).to_ulong() * add(c, d).to_ulong();
+	
+	bitset<MAX_BIT> subt = sub(sub(foil, bd), ac);
+	
+	bitset<MAX_BIT> ans = add(add((ac << (halfSize * 2)), bd), (subt << halfSize));
 	
 	return ans;
 	
+}
+
+size_t getLength (std::bitset<MAX_BIT> a) {
+	size_t len = 0;
+	while (a.to_string().find("1") != std::string::npos) {
+		// cout << a.to_string() << endl;
+		a >>= 1;
+		len++;
+	}
+	return len;
 }
 
 namespace me {
@@ -112,4 +123,29 @@ namespace me {
 	T max (T a, T b) {
 		return (a > b)? a : b;
 	}
+}
+
+std::bitset<MAX_BIT> sub (const std::bitset<MAX_BIT>& x, std::bitset<MAX_BIT> y) {
+	y.flip();	
+	return add(add(x, y), 1);
+}
+
+
+std::bitset<MAX_BIT> add (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y) {
+	std::bitset<MAX_BIT> sum;
+	unsigned carry = 0; // max should be 3 (2 bits)
+	for (size_t i = 0; i < MAX_BIT; ++i) {
+		unsigned rawsum = x[i] + y[i] + carry; // max should be 3 (2 bits)
+		if (rawsum == 2) {
+			carry = 1; // 2 = 0b10
+			sum[i] = 0;
+		} else if (rawsum == 3) {
+			carry = 1; // 3 = 0b11
+			sum[i] = 1;
+		} else {
+			carry = 0;
+			sum[i] = rawsum;
+		}
+	}
+	return sum;
 }
