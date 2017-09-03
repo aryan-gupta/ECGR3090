@@ -23,7 +23,8 @@ namespace me {
 	template <typename T> T max (T a, T b);
 }
 
-std::bitset<MAX_BIT> karatsuba (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
+std::string karatsuba (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
+std::bitset<MAX_BIT> ksbm (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
 std::bitset<MAX_BIT> add (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
 std::bitset<MAX_BIT> sub (const std::bitset<MAX_BIT>& x, std::bitset<MAX_BIT> y);
 std::bitset<MAX_BIT> str2bitset (std::string str);
@@ -32,22 +33,16 @@ std::string bitset2str (std::bitset<MAX_BIT> bit);
 void mb2 (std::string& str);
 size_t getLength (std::bitset<MAX_BIT> a);
 
-int main (int argc, char** argv) {
-	std::string var1, var2;
-	
-	cout << "Please enter 2 numbers you want to muliply. Current limit of answer is (2^" << MAX_BIT << " - 1)" << endl;
-	cout << ":: ";
-	cin >> var1;
-	cout << ":: ";
-	cin >> var2;
-	
-	std::bitset<MAX_BIT> x = str2bitset(var1); // convert both numbers string to binary bitset
-	std::bitset<MAX_BIT> y = str2bitset(var2);
-	
-	std::bitset<MAX_BIT> ans = karatsuba(x, y); // do the karatsuba multiplication
-	
-	cout << "The answer is " << bitset2str(ans) << endl; // convert it back to a string and output the answer
-	return 0;
+int main() {
+    cout << "7*6 = " << karatsuba(7, 6) << endl; // 42
+    cout << "15*15 = " << karatsuba(15, 15) << endl; // 225
+    cout << "6*13 = " << karatsuba(6, 13) << endl; // 78
+    cout << "51*49 = " << karatsuba(51, 49) << endl; // 2499
+    cout << "111*111 = " << karatsuba(111, 111) << endl; // 12321
+    cout << "5678*1234 = " << karatsuba(5678, 1234) << endl; // 7006652
+    cout << "12345678*1 = " << karatsuba(12345678, 1) << endl; // 12345678
+    cout << "12345678*0 = " << karatsuba(12345678, 0) << endl; // 0
+    return 0;
 }
 
 std::bitset<MAX_BIT> str2bitset (std::string str) {
@@ -76,7 +71,11 @@ void db2 (std::string& str) { // https://stackoverflow.com/questions/11006844
 	}
 }
 
-std::bitset<MAX_BIT> karatsuba (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y) {
+std::string karatsuba (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y) {
+	return bitset2str(ksbm(x, y));
+}
+
+std::bitset<MAX_BIT> ksbm (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y) {
 	using std::bitset;
 	
 	size_t len1 = getLength(x);
@@ -105,10 +104,10 @@ std::bitset<MAX_BIT> karatsuba (const std::bitset<MAX_BIT>& x, const std::bitset
 	bitset<MAX_BIT> c = y >> halfSize;
 	bitset<MAX_BIT> d = y & halfMask;
 	
-	bitset<MAX_BIT> ac = karatsuba(a, c);
-	bitset<MAX_BIT> bd = karatsuba(b, d);
+	bitset<MAX_BIT> ac = ksbm(a, c);
+	bitset<MAX_BIT> bd = ksbm(b, d);
 	
-	bitset<MAX_BIT> foil = karatsuba(add(a, b), add(c, d)); // (a + b) * (c + d)
+	bitset<MAX_BIT> foil = ksbm(add(a, b), add(c, d)); // (a + b) * (c + d)
 	
 	bitset<MAX_BIT> subt = sub(sub(foil, bd), ac); // foil - bd - ac
 	
