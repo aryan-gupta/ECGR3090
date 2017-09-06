@@ -35,15 +35,15 @@ void mb2 (std::string& str);
 size_t getLength (std::bitset<MAX_BIT> a);
 
 int main() {
-	for (int i = 1; i < 10; i += 2) {
-		std::string x(i, '3');
-		std::string y(i, '3');
+	for (int i = 50; i < 60; i += 1) {
+		std::string x = std::to_string((int)pow(2, i) - 1);
+		std::string y = std::to_string((int)pow(2, i) - 1);
 		auto start = std::chrono::high_resolution_clock::now();
 		auto ans = bitset2str(ksbm(str2bitset(x), str2bitset(y)));
 		auto end = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<double> elapsed = end - start;
 		cout << "Time for " << i << " digits: " << elapsed.count() << endl;
-		// cout << x << " * " << y  << " = " << ans << endl;
+		//cout << x << " * " << y  << " = " << ans << endl;
 	}
 	
     return 0;
