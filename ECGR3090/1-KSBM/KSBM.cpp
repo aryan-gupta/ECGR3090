@@ -24,30 +24,33 @@ namespace me {
 	template <typename T> T max (T a, T b);
 }
 
-std::string karatsuba (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
+ull karatsuba (const ull x, const ull y);
+std::string karatsuba (const std::string& x, const std::string& y)
+
 std::bitset<MAX_BIT> ksbm (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
 std::bitset<MAX_BIT> add (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
 std::bitset<MAX_BIT> sub (const std::bitset<MAX_BIT>& x, std::bitset<MAX_BIT> y);
 inline std::bitset<MAX_BIT> multiply (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
+
 std::bitset<MAX_BIT> str2bitset (std::string str);
 void db2 (std::string& str);
+
 std::string bitset2str (std::bitset<MAX_BIT> bit);
 void mb2 (std::string& str);
+
 size_t getLength (std::bitset<MAX_BIT> a);
 
 int main() {
-	for (int i = 1; i < 5; i += 1) {
-		std::string x = std::to_string((int)pow(2, i) - 1);
-		std::string y = std::to_string((int)pow(2, i) - 1);
-		auto start = std::chrono::high_resolution_clock::now();
-		auto ans = bitset2str(ksbm(str2bitset(x), str2bitset(y)));
-		auto end = std::chrono::high_resolution_clock::now();
-		std::chrono::duration<double> elapsed = end - start;
-		cout << "Time for " << i << " digits: " << elapsed.count() << endl;
-		cout << x << " * " << y  << " = " << ans << endl;
-	}
-	
+	cout << "7*6 = " << karatsuba(7, 6) << endl; // 42
+    cout << "15*15 = " << karatsuba(15, 15) << endl; // 225
+    cout << "6*13 = " << karatsuba(6, 13) << endl; // 78
+    cout << "51*49 = " << karatsuba(51, 49) << endl; // 2499
+    cout << "111*111 = " << karatsuba(111, 111) << endl; // 12321
+    cout << "5678*1234 = " << karatsuba(5678, 1234) << endl; // 7006652
+    cout << "12345678*1 = " << karatsuba(12345678, 1) << endl; // 12345678
+    cout << "12345678*0 = " << karatsuba(12345678, 0) << endl; // 0
     return 0;
+
 }
 
 std::bitset<MAX_BIT> str2bitset (std::string str) {
@@ -74,6 +77,14 @@ void db2 (std::string& str) { // https://stackoverflow.com/questions/11006844
 	while (str[0] == '0') {
 		str.erase(str.begin());
 	}
+}
+
+ull karatsuba (const ull x, const ull y) {
+	return ksbm(x, y).to_ullong();
+}
+
+std::string karatsuba (const std::string& x, const std::string& y) {
+	return bitset2str(ksbm(str2bitset(x), str2bitset(y)));
 }
 
 std::bitset<MAX_BIT> ksbm (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y) {
