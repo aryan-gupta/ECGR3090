@@ -28,6 +28,7 @@ std::string karatsuba (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>
 std::bitset<MAX_BIT> ksbm (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
 std::bitset<MAX_BIT> add (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
 std::bitset<MAX_BIT> sub (const std::bitset<MAX_BIT>& x, std::bitset<MAX_BIT> y);
+inline std::bitset<MAX_BIT> multiply (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
 std::bitset<MAX_BIT> str2bitset (std::string str);
 void db2 (std::string& str);
 std::string bitset2str (std::bitset<MAX_BIT> bit);
@@ -35,7 +36,7 @@ void mb2 (std::string& str);
 size_t getLength (std::bitset<MAX_BIT> a);
 
 int main() {
-	for (int i = 50; i < 60; i += 1) {
+	for (int i = 1; i < 5; i += 1) {
 		std::string x = std::to_string((int)pow(2, i) - 1);
 		std::string y = std::to_string((int)pow(2, i) - 1);
 		auto start = std::chrono::high_resolution_clock::now();
@@ -43,7 +44,7 @@ int main() {
 		auto end = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<double> elapsed = end - start;
 		cout << "Time for " << i << " digits: " << elapsed.count() << endl;
-		//cout << x << " * " << y  << " = " << ans << endl;
+		cout << x << " * " << y  << " = " << ans << endl;
 	}
 	
     return 0;
@@ -82,13 +83,7 @@ std::bitset<MAX_BIT> ksbm (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_
 	size_t len2 = getLength(y);
 	
 	if (len1 <= 1 || len2 <= 1) {
-		// Current limitation prevents 2 binary number that are
-		// 64 times larger than the other from being multiplied
-		// by each other. This is 'cause the larger number cant
-		// fit into a ull (64 bits) when the other number will 
-		// probebly be a single bit number. (The factor is machine
-		// dependent)
-		return x.to_ullong() * y.to_ullong(); // multiply it normallt if either one of them is single bit
+		return multiply(x, y);
 	}
 	
 	size_t halfSize = me::max(len1, len2) / 2;
@@ -180,4 +175,13 @@ std::bitset<MAX_BIT> add (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_B
 		}
 	}
 	return sum;
+}
+
+inline std::bitset<MAX_BIT> multiply (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y) {
+	if (x.to_ullong() == 1) // if either are 1, ten return other
+		return y;
+	if (y.to_ullong() == 1)
+		return x;
+	else
+		return std::bitset<MAX_BIT>(0); // if either are 0, return a bitset of 0;
 }
