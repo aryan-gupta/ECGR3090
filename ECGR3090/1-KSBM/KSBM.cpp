@@ -14,6 +14,7 @@ using std::endl;
 #include <string>
 #include <cmath>
 #include <bitset>	
+#include <chrono>
 
 typedef unsigned long long ull;
 const size_t MAX_BIT = 10000;
@@ -34,14 +35,17 @@ void mb2 (std::string& str);
 size_t getLength (std::bitset<MAX_BIT> a);
 
 int main() {
-    cout << "7*6 = " << karatsuba(7, 6) << endl; // 42
-    cout << "15*15 = " << karatsuba(15, 15) << endl; // 225
-    cout << "6*13 = " << karatsuba(6, 13) << endl; // 78
-    cout << "51*49 = " << karatsuba(51, 49) << endl; // 2499
-    cout << "111*111 = " << karatsuba(111, 111) << endl; // 12321
-    cout << "5678*1234 = " << karatsuba(5678, 1234) << endl; // 7006652
-    cout << "12345678*1 = " << karatsuba(12345678, 1) << endl; // 12345678
-    cout << "12345678*0 = " << karatsuba(12345678, 0) << endl; // 0
+	for (int i = 1; i < 10; i += 2) {
+		std::string x(i, '3');
+		std::string y(i, '3');
+		auto start = std::chrono::high_resolution_clock::now();
+		auto ans = bitset2str(ksbm(str2bitset(x), str2bitset(y)));
+		auto end = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<double> elapsed = end - start;
+		cout << "Time for " << i << " digits: " << elapsed.count() << endl;
+		// cout << x << " * " << y  << " = " << ans << endl;
+	}
+	
     return 0;
 }
 
@@ -69,10 +73,6 @@ void db2 (std::string& str) { // https://stackoverflow.com/questions/11006844
 	while (str[0] == '0') {
 		str.erase(str.begin());
 	}
-}
-
-std::string karatsuba (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y) {
-	return bitset2str(ksbm(x, y));
 }
 
 std::bitset<MAX_BIT> ksbm (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y) {
