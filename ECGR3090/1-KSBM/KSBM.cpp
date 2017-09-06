@@ -25,7 +25,7 @@ namespace me {
 }
 
 ull karatsuba (const ull x, const ull y);
-std::string karatsuba (const std::string& x, const std::string& y)
+std::string karatsuba (const std::string& x, const std::string& y);
 
 std::bitset<MAX_BIT> ksbm (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
 std::bitset<MAX_BIT> add (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
