@@ -14,6 +14,7 @@ using std::endl;
 #include <string>
 #include <cmath>
 #include <bitset>	
+#include <chrono>
 
 typedef unsigned long long ull;
 const size_t MAX_BIT = 10000;
@@ -23,18 +24,24 @@ namespace me {
 	template <typename T> T max (T a, T b);
 }
 
-std::string karatsuba (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
+ull karatsuba (const ull x, const ull y);
+std::string karatsuba (const std::string& x, const std::string& y);
+
 std::bitset<MAX_BIT> ksbm (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
 std::bitset<MAX_BIT> add (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
 std::bitset<MAX_BIT> sub (const std::bitset<MAX_BIT>& x, std::bitset<MAX_BIT> y);
+inline std::bitset<MAX_BIT> multiply (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y);
+
 std::bitset<MAX_BIT> str2bitset (std::string str);
 void db2 (std::string& str);
+
 std::string bitset2str (std::bitset<MAX_BIT> bit);
 void mb2 (std::string& str);
+
 size_t getLength (std::bitset<MAX_BIT> a);
 
 int main() {
-    cout << "7*6 = " << karatsuba(7, 6) << endl; // 42
+	cout << "7*6 = " << karatsuba(7, 6) << endl; // 42
     cout << "15*15 = " << karatsuba(15, 15) << endl; // 225
     cout << "6*13 = " << karatsuba(6, 13) << endl; // 78
     cout << "51*49 = " << karatsuba(51, 49) << endl; // 2499
@@ -43,6 +50,7 @@ int main() {
     cout << "12345678*1 = " << karatsuba(12345678, 1) << endl; // 12345678
     cout << "12345678*0 = " << karatsuba(12345678, 0) << endl; // 0
     return 0;
+
 }
 
 std::bitset<MAX_BIT> str2bitset (std::string str) {
@@ -71,8 +79,12 @@ void db2 (std::string& str) { // https://stackoverflow.com/questions/11006844
 	}
 }
 
-std::string karatsuba (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y) {
-	return bitset2str(ksbm(x, y));
+ull karatsuba (const ull x, const ull y) {
+	return ksbm(x, y).to_ullong();
+}
+
+std::string karatsuba (const std::string& x, const std::string& y) {
+	return bitset2str(ksbm(str2bitset(x), str2bitset(y)));
 }
 
 std::bitset<MAX_BIT> ksbm (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y) {
@@ -82,13 +94,7 @@ std::bitset<MAX_BIT> ksbm (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_
 	size_t len2 = getLength(y);
 	
 	if (len1 <= 1 || len2 <= 1) {
-		// Current limitation prevents 2 binary number that are
-		// 64 times larger than the other from being multiplied
-		// by each other. This is 'cause the larger number cant
-		// fit into a ull (64 bits) when the other number will 
-		// probebly be a single bit number. (The factor is machine
-		// dependent)
-		return x.to_ullong() * y.to_ullong(); // multiply it normallt if either one of them is single bit
+		return multiply(x, y);
 	}
 	
 	size_t halfSize = me::max(len1, len2) / 2;
@@ -180,4 +186,13 @@ std::bitset<MAX_BIT> add (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_B
 		}
 	}
 	return sum;
+}
+
+inline std::bitset<MAX_BIT> multiply (const std::bitset<MAX_BIT>& x, const std::bitset<MAX_BIT>& y) {
+	if (x.to_ullong() == 1) // if either are 1, ten return other
+		return y;
+	if (y.to_ullong() == 1)
+		return x;
+	else
+		return std::bitset<MAX_BIT>(0); // if either are 0, return a bitset of 0;
 }
