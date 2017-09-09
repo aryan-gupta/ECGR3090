@@ -67,6 +67,14 @@ int main()
 }
 
 vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
+	if (newInterval.end < intervals[0].start) { // Interval before all
+		intervals.insert(intervals.begin(), newInterval);
+		return intervals;
+	} else if (newInterval.start > (--intervals.end())->end) { // interval after all
+		intervals.push_back(newInterval);
+		return intervals;
+	}
+	
 	vector<Interval> ret;
 	Interval& ni = newInterval;
 	
