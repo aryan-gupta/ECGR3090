@@ -7,16 +7,6 @@ This is because the new interval [4,9] overlaps with [3,5],[6,7],[8,10]. Make su
 
 Use the following test program -*/
 
-/*	Pesudo
-
-find where lower digit fits
-find last digit fits
-squash all intervals in between
-
-*/
-
- 
-
 
 #include <iostream>
 #include <vector>
@@ -24,6 +14,17 @@ squash all intervals in between
 
 using namespace std;
 
+namespace me {
+	template <typename T>
+	inline T min (T a, T b) {
+		return (a < b)? a : b;
+	} 
+	
+	template <typename T>
+	inline T max (T a, T b) {
+		return (a > b)? a : b;
+	}
+}
 
 //Definition for an interval.
 struct Interval {
@@ -50,13 +51,13 @@ int main()
         cout << ele.start << " " << ele.end << endl;
     }
     cout << endl;
-    Interval interval3(1,3), interval4(5,7), interval5(10,12), interval6(15,16), interval7(19,21);
+    Interval interval3(1,3), interval4(5,7), interval5(9,12), interval6(15,16), interval7(19,21);
     vector<Interval> intervalSet_in2 = {interval3, interval4, interval5, interval6, interval7};
     cout << "Interval set prior to inserting [4,9]" << endl;
     for(auto ele: intervalSet_in2) { // C++11 range loops
         cout << ele.start << " " << ele.end << endl;
     }
-    vector<Interval> intervalSet_out2 = insert(intervalSet_in2, Interval(-1,6));
+    vector<Interval> intervalSet_out2 = insert(intervalSet_in2, Interval(25,28));
     cout << "Interval set after inserting [4,9]" << endl;
     for(auto  ele: intervalSet_out2) {
         cout << ele.start << " " << ele.end << endl;
@@ -70,27 +71,31 @@ vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
 	Interval& ni = newInterval;
 	
 	auto i = intervals.begin();
-	
+	// Expand intervals
 	for (; i != intervals.end(); ++i) {
 		if (ni.start > i->end) { // if interval is below the new interval
 			ret.push_back(*i);
-		}
-		
-		if (ni.start < i->start) { // 
-			if (ni.end > i->end) {
-				if ((i + 1) != --intervals.end()) { // if next interval exists
-					if (ni.end < (i + 1)->) {
-						
-					}
-				} else { // new interval is the last one, pull end to new end and break
-					i->end = newInterval.end;
-				}
-			}
+			continue;
 		}
 		
 		if (i->start > ni.end) { // if interval is greater than new interval
 			ret.push_back(*i);
+			continue;
 		}
+		
+		i->start = me::min(i->start, ni.start);
+		i->end   = me::max(i->end, ni.end);
+		ret.push_back(*i);
+	}
+	
+	// Squash Intervals
+	i = ret.begin();	
+	while (i != --ret.end()) {
+		if (i->end > (i + 1)->start) {
+			i->start = me::min(i->start, (i + 1)->start);
+			i->end   = me::max(i->end, (i + 1)->end);
+			ret.erase(i + 1);
+		} else ++i;
 	}
 	
 	return ret;
