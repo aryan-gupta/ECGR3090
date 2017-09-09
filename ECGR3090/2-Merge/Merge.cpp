@@ -51,13 +51,13 @@ int main()
         cout << ele.start << " " << ele.end << endl;
     }
     cout << endl;
-    Interval interval3(1,3), interval4(5,7), interval5(9,12), interval6(15,16), interval7(19,21);
+    Interval interval3(1,3), interval4(5,7), interval5(9,11), interval6(15,16), interval7(19,21);
     vector<Interval> intervalSet_in2 = {interval3, interval4, interval5, interval6, interval7};
     cout << "Interval set prior to inserting [4,9]" << endl;
     for(auto ele: intervalSet_in2) { // C++11 range loops
         cout << ele.start << " " << ele.end << endl;
     }
-    vector<Interval> intervalSet_out2 = insert(intervalSet_in2, Interval(25,28));
+    vector<Interval> intervalSet_out2 = insert(intervalSet_in2, Interval(6,13));
     cout << "Interval set after inserting [4,9]" << endl;
     for(auto  ele: intervalSet_out2) {
         cout << ele.start << " " << ele.end << endl;
@@ -75,36 +75,32 @@ vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
 		return intervals;
 	}
 	
-	vector<Interval> ret;
 	Interval& ni = newInterval;
 	
 	auto i = intervals.begin();
 	// Expand intervals
 	for (; i != intervals.end(); ++i) {
 		if (ni.start > i->end) { // if interval is below the new interval
-			ret.push_back(*i);
 			continue;
 		}
 		
 		if (i->start > ni.end) { // if interval is greater than new interval
-			ret.push_back(*i);
 			continue;
 		}
 		
 		i->start = me::min(i->start, ni.start);
 		i->end   = me::max(i->end, ni.end);
-		ret.push_back(*i);
 	}
 	
 	// Squash Intervals
-	i = ret.begin();	
-	while (i != --ret.end()) {
+	i = intervals.begin();	
+	while (i != --intervals.end()) {
 		if (i->end > (i + 1)->start) {
 			i->start = me::min(i->start, (i + 1)->start);
 			i->end   = me::max(i->end, (i + 1)->end);
-			ret.erase(i + 1);
+			intervals.erase(i + 1);
 		} else ++i;
 	}
 	
-	return ret;
+	return intervals;
 }
