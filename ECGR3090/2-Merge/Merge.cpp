@@ -66,56 +66,32 @@ int main()
 }
 
 vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
-	
-	if (newInterval.end < intervals[0].start) { // Interval before all
-		intervals.insert(intervals.begin(), newInterval);
-		return intervals;
-	} else if (newInterval.start > (--intervals.end())->end) { // interval after all
-		intervals.push_back(newInterval);
-		return intervals;
-	}
+	vector<Interval> ret;
+	Interval& ni = newInterval;
 	
 	auto i = intervals.begin();
-	bool remove = false;
 	
-	if (newInterval.start < i->start) { // The new start is before first
-		i->start = newInterval.start;
-		remove = true;
-	}
-	
-	for ( ; i != intervals.end(); ++i) {
-		if (i != intervals.begin() and newInterval.end < i->start and newInterval.start > (i - 1)->end) { // Whole interval is inbetween
-			intervals.insert(i, newInterval);
-			break;
-		}
-	
-		if (remove and newInterval.end < i->end and newInterval.end > i->start) { // found end num in an interval
-			// (i - 1)->end = i->end;
-			// intervals.erase(i);
-			break;
+	for (; i != intervals.end(); ++i) {
+		if (ni.start > i->end) { // if interval is below the new interval
+			ret.push_back(*i);
 		}
 		
-		if (remove and newInterval.end <= (i + 1)->start and newInterval.end > i->end) { // found end between two intervals
-			i->end = newInterval.end;
-			break;
+		if (ni.start < i->start) { // 
+			if (ni.end > i->end) {
+				if ((i + 1) != --intervals.end()) { // if next interval exists
+					if (ni.end < (i + 1)->) {
+						
+					}
+				} else { // new interval is the last one, pull end to new end and break
+					i->end = newInterval.end;
+				}
+			}
 		}
 		
-		if (remove) {
-			intervals.erase(i--); // subtract one to account shift in one
-			continue;
-		}
-		
-		if (!remove and newInterval.start < i->start and newInterval.start > (i - 1)->end) { // found start num inbetween two intervals
-			(i--)->start = newInterval.start; // pull start to new start and recheck for end condition
-			remove = true;
-			continue;
-		}
-		
-		if (!remove and newInterval.start < i->end and newInterval.start > i->start) { // found start num in an interval
-			remove = true;
-			continue;
+		if (i->start > ni.end) { // if interval is greater than new interval
+			ret.push_back(*i);
 		}
 	}
 	
-	return intervals;
+	return ret;
 }
