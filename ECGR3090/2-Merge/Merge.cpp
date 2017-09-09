@@ -100,10 +100,11 @@ vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
 	// Squash Intervals
 	i = intervals.begin();	
 	while (i != --intervals.end()) {
-		if (i->end > (i + 1)->start) {
-			i->start = me::min(i->start, (i + 1)->start);
-			i->end   = me::max(i->end, (i + 1)->end);
-			intervals.erase(i + 1);
+		auto next = i + 1;
+		if (i->end > next->start) {
+			i->start = me::min(i->start, next->start);
+			i->end   = me::max(i->end, next->end);
+			intervals.erase(next);
 		} else ++i;
 	}
 	
