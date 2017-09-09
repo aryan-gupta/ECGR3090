@@ -7,16 +7,6 @@ This is because the new interval [4,9] overlaps with [3,5],[6,7],[8,10]. Make su
 
 Use the following test program -*/
 
-/*	Pesudo
-
-find where lower digit fits
-find last digit fits
-squash all intervals in between
-
-*/
-
- 
-
 
 #include <iostream>
 #include <vector>
@@ -24,6 +14,17 @@ squash all intervals in between
 
 using namespace std;
 
+namespace me {
+	template <typename T>
+	inline T min (T a, T b) {
+		return (a < b)? a : b;
+	} 
+	
+	template <typename T>
+	inline T max (T a, T b) {
+		return (a > b)? a : b;
+	}
+}
 
 //Definition for an interval.
 struct Interval {
@@ -66,7 +67,6 @@ int main()
 }
 
 vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
-	
 	if (newInterval.end < intervals[0].start) { // Interval before all
 		intervals.insert(intervals.begin(), newInterval);
 		return intervals;
@@ -75,40 +75,37 @@ vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
 		return intervals;
 	}
 	
-	bool remove = false;
+	Interval& ni = newInterval;
+	auto i = intervals.begin();
 	
-	for (auto i = intervals.begin(); i != intervals.end(); ++i) {
-		if (i != intervals.begin() and newInterval.end < i->start and newInterval.start > (i - 1)->end) { // Whole interval is inbetween
-			intervals.insert(i, newInterval);
-			break;
+	// Expand intervals
+	for (; i != intervals.end(); ++i) {
+		if (i != --intervals.end() and i->end < ni.start and (i + 1)->start > ni.end) { // if intervals is between 2 intervals
+			intervals.insert(++i, ni);
+			return intervals;
 		}
+		
+		if (ni.start > i->end) { // if interval is below the new interval
+			continue;
+		}
+		
+		if (i->start > ni.end) { // if interval is greater than new interval
+			continue;
+		}
+		
+		i->start = me::min(i->start, ni.start); // new interval is overlapping current interval, expand it
+		i->end   = me::max(i->end, ni.end);
+	}
 	
-		if (remove and newInterval.end < i->end and newInterval.end > i->start) { // found end num in an interval
-			(i - 1)->end = i->end;
-			intervals.erase(i);
-			break;
-		}
-		
-		if (remove and newInterval.end > (i - 1)->end and newInterval.end < i->start) { // found end between two intervals
-			(i - 1)->end = newInterval.end;
-			break;
-			
-		}
-		
-		if (remove) {
-			intervals.erase(i--); // subtract one to account shift in one
-			continue;
-		}
-		
-		if (!remove and newInterval.start < i->start and newInterval.end > i->end) { // found start num inbetween two intervals
-			i->start = newInterval.start; // pull start to new start
-			continue;
-		}
-		
-		if (!remove and newInterval.start < i->end and newInterval.start > i->start) { // found start num in an interval
-			remove = true;
-			continue;
-		}
+	// Squash Intervals
+	i = intervals.begin();	
+	while (i != --intervals.end()) {
+		auto next = i + 1;
+		if (i->end > next->start) {                    // current interval is overlapping next interval
+			i->start = me::min(i->start, next->start); // squash it into one interval
+			i->end   = me::max(i->end, next->end);
+			intervals.erase(next);                     // and remove the other one
+		} else ++i;
 	}
 	
 	return intervals;
