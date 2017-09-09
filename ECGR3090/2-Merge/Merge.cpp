@@ -51,13 +51,13 @@ int main()
         cout << ele.start << " " << ele.end << endl;
     }
     cout << endl;
-    Interval interval3(1,3), interval4(5,7), interval5(9,11), interval6(15,16), interval7(19,21);
+    Interval interval3(1,3), interval4(5,7), interval5(11,13), interval6(15,16), interval7(19,21);
     vector<Interval> intervalSet_in2 = {interval3, interval4, interval5, interval6, interval7};
     cout << "Interval set prior to inserting [4,9]" << endl;
     for(auto ele: intervalSet_in2) { // C++11 range loops
         cout << ele.start << " " << ele.end << endl;
     }
-    vector<Interval> intervalSet_out2 = insert(intervalSet_in2, Interval(6,13));
+    vector<Interval> intervalSet_out2 = insert(intervalSet_in2, Interval(9,10));
     cout << "Interval set after inserting [4,9]" << endl;
     for(auto  ele: intervalSet_out2) {
         cout << ele.start << " " << ele.end << endl;
@@ -76,10 +76,15 @@ vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
 	}
 	
 	Interval& ni = newInterval;
-	
 	auto i = intervals.begin();
+	
 	// Expand intervals
 	for (; i != intervals.end(); ++i) {
+		if (i != --intervals.end() and i->end < ni.start and (i + 1)->start > ni.end) { // if intervals is between 2 intervals
+			intervals.insert(++i, ni);
+			return intervals;
+		}
+		
 		if (ni.start > i->end) { // if interval is below the new interval
 			continue;
 		}
