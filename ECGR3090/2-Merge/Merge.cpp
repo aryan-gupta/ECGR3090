@@ -50,13 +50,13 @@ int main()
         cout << ele.start << " " << ele.end << endl;
     }
     cout << endl;
-    Interval interval3(1,2), interval4(3,5), interval5(6,7), interval6(8,10), interval7(12,16);
+    Interval interval3(1,3), interval4(5,7), interval5(10,12), interval6(15,16), interval7(19,21);
     vector<Interval> intervalSet_in2 = {interval3, interval4, interval5, interval6, interval7};
     cout << "Interval set prior to inserting [4,9]" << endl;
     for(auto ele: intervalSet_in2) { // C++11 range loops
         cout << ele.start << " " << ele.end << endl;
     }
-    vector<Interval> intervalSet_out2 = insert(intervalSet_in2, Interval(4,9));
+    vector<Interval> intervalSet_out2 = insert(intervalSet_in2, Interval(-1,6));
     cout << "Interval set after inserting [4,9]" << endl;
     for(auto  ele: intervalSet_out2) {
         cout << ele.start << " " << ele.end << endl;
@@ -75,24 +75,29 @@ vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
 		return intervals;
 	}
 	
+	auto i = intervals.begin();
 	bool remove = false;
 	
-	for (auto i = intervals.begin(); i != intervals.end(); ++i) {
+	if (newInterval.start < i->start) { // The new start is before first
+		i->start = newInterval.start;
+		remove = true;
+	}
+	
+	for ( ; i != intervals.end(); ++i) {
 		if (i != intervals.begin() and newInterval.end < i->start and newInterval.start > (i - 1)->end) { // Whole interval is inbetween
 			intervals.insert(i, newInterval);
 			break;
 		}
 	
 		if (remove and newInterval.end < i->end and newInterval.end > i->start) { // found end num in an interval
-			(i - 1)->end = i->end;
-			intervals.erase(i);
+			// (i - 1)->end = i->end;
+			// intervals.erase(i);
 			break;
 		}
 		
-		if (remove and newInterval.end > (i - 1)->end and newInterval.end < i->start) { // found end between two intervals
-			(i - 1)->end = newInterval.end;
+		if (remove and newInterval.end <= (i + 1)->start and newInterval.end > i->end) { // found end between two intervals
+			i->end = newInterval.end;
 			break;
-			
 		}
 		
 		if (remove) {
@@ -100,8 +105,9 @@ vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
 			continue;
 		}
 		
-		if (!remove and newInterval.start < i->start and newInterval.end > i->end) { // found start num inbetween two intervals
-			i->start = newInterval.start; // pull start to new start
+		if (!remove and newInterval.start < i->start and newInterval.start > (i - 1)->end) { // found start num inbetween two intervals
+			(i--)->start = newInterval.start; // pull start to new start and recheck for end condition
+			remove = true;
 			continue;
 		}
 		
