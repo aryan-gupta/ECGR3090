@@ -95,17 +95,15 @@ vector<Interval> insert(vector<Interval> &intervals, Interval newInterval) {
 		
 		i->start = me::min(i->start, ni.start); // new interval is overlapping current interval, expand it
 		i->end   = me::max(i->end, ni.end);
-	}
-	
-	// Squash Intervals
-	i = intervals.begin();	
-	while (i != --intervals.end()) {
-		auto next = i + 1;
-		if (i->end > next->start) {                    // current interval is overlapping next interval
-			i->start = me::min(i->start, next->start); // squash it into one interval
-			i->end   = me::max(i->end, next->end);
-			intervals.erase(next);                     // and remove the other one
-		} else ++i;
+		
+		if (i != intervals.begin()) {
+			auto prev = i - 1;
+			if (i->start < prev->end) { // current interval is overlapping prev interval
+				prev->start = me::min(i->start, prev->start); // squash it into one interval
+				prev->end   = me::max(i->end, prev->end);
+				intervals.erase(i--);                     // and remove the other one
+			}
+		}
 	}
 	
 	return intervals;
