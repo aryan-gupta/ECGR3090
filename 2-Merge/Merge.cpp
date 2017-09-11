@@ -51,13 +51,13 @@ int main()
         cout << ele.start << " " << ele.end << endl;
     }
     cout << endl;
-    Interval interval3(1,2), interval4(3,5), interval5(6,7), interval6(8,10), interval7(12,16);
+    Interval interval3(1,3), interval4(5,7), interval5(11,13), interval6(15,16), interval7(19,21);
     vector<Interval> intervalSet_in2 = {interval3, interval4, interval5, interval6, interval7};
     cout << "Interval set prior to inserting [4,9]" << endl;
     for(auto ele: intervalSet_in2) { // C++11 range loops
         cout << ele.start << " " << ele.end << endl;
     }
-    vector<Interval> intervalSet_out2 = insert(intervalSet_in2, Interval(4,9));
+    vector<Interval> intervalSet_out2 = insert(intervalSet_in2, Interval(9,10));
     cout << "Interval set after inserting [4,9]" << endl;
     for(auto  ele: intervalSet_out2) {
         cout << ele.start << " " << ele.end << endl;
