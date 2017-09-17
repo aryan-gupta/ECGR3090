@@ -30,11 +30,11 @@ bool parenMatch(string expression);
 
 int main()
 {
-	string expr1 = "(()()()())";
-	string expr2 = "{[(])}";
-	string expr3 = "(()){}()";
-	string expr4 = "{[(])}";
-	string expr5 = "{[()]}";
+	string expr1 = "(()()()())"; // bal
+	string expr2 = "{[(])}"; // unbal
+	string expr3 = "(()){}()"; // bal
+	string expr4 = "{[(])}"; // unbal
+	string expr5 = "{[()]}"; // bal
 	if (parenMatch(expr1))
 		cout << "Parantheses balanced in expr1" << endl;
 	else
@@ -63,8 +63,43 @@ int main()
 }
 
 
+char getComplement(const char p) {
+	switch (p) {
+		case '(': return ')';
+		case '{': return '}';
+		case '[': return ']';
+		case ')': return '(';
+		case '}': return '{';
+		case ']': return '[';
+	}
+}
+
 bool parenMatch(string expression) {
-
- // Your code here...
-
+	std::stack<char> paren;
+	for (char ch : expression) {
+		switch (ch) { // chars are bassically integer types so we can do this
+			case '(':
+			case '{':
+			case '[':
+				paren.push(ch);
+			break;
+			
+			case ')':
+			case '}':
+			case ']': {
+				if (paren.top() != getComplement(ch)) {
+					return false;
+				} else {
+					paren.pop();
+				}
+			} break;
+			
+			default:
+				std::cerr << "ERROR::PARENMATCH::INVALID_CHARACTER" << std::endl;
+			break;
+		}
+	}
+	
+	if (paren.empty()) return true;
+	else return false;
 }
