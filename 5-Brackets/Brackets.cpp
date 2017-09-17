@@ -30,35 +30,40 @@ bool parenMatch(string expression);
 
 int main()
 {
-string expr1 = "(()()()())";
-string expr2 = "{[(])}";
-string expr3 = "(()){}()";
-string expr4 = "{[(])}";
-string expr5 = "{[()]}";
-if (parenMatch(expr1))
-cout << "Parantheses balanced in expr1" << endl;
-else
-cout << "Parentheses unbalanced in expr1" << endl;
-if (parenMatch(expr2))
-cout << "Parantheses balanced in expr2" << endl;
-else
-cout << "Parentheses unbalanced in expr2" << endl;
-if (parenMatch(expr3))
-cout << "Parantheses balanced in expr3" << endl;
-else
-cout << "Parentheses unbalanced in expr3" << endl;
-if (parenMatch(expr4))
-cout << "Parantheses balanced in expr4" << endl;
-else
-cout << "Parentheses unbalanced in expr4" << endl;
-if (parenMatch(expr5))
-cout << "Parantheses balanced in expr5" << endl;
-else
-cout << "Parentheses unbalanced in expr5" << endl;
-return 0;
+	string expr1 = "(()()()())";
+	string expr2 = "{[(])}";
+	string expr3 = "(()){}()";
+	string expr4 = "{[(])}";
+	string expr5 = "{[()]}";
+	if (parenMatch(expr1))
+		cout << "Parantheses balanced in expr1" << endl;
+	else
+		cout << "Parentheses unbalanced in expr1" << endl;
+	
+	if (parenMatch(expr2))
+		cout << "Parantheses balanced in expr2" << endl;
+	else
+		cout << "Parentheses unbalanced in expr2" << endl;
+	
+	if (parenMatch(expr3))
+		cout << "Parantheses balanced in expr3" << endl;
+	else
+		cout << "Parentheses unbalanced in expr3" << endl;
+	
+	if (parenMatch(expr4))
+		cout << "Parantheses balanced in expr4" << endl;
+	else
+		cout << "Parentheses unbalanced in expr4" << endl;
+	
+	if (parenMatch(expr5))
+		cout << "Parantheses balanced in expr5" << endl;
+	else
+		cout << "Parentheses unbalanced in expr5" << endl;
+	return 0;
 }
-bool parenMatch(string expression) 
-{
+
+
+bool parenMatch(string expression) {
 
  // Your code here...
 
