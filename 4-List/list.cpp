@@ -16,6 +16,21 @@ List::List()
    last = nullptr;
 }
 
+List::List(List& other) { // cant name const parameter cause its not a const function
+	// https://github.com/aryan-gupta/DataStructures/blob/develop/DList.h
+	
+	Iterator pos = other.begin(), end = other.end();
+	
+	last = first = new Node(pos.get()); // restrictions 
+	pos.next();
+	
+	for (; !pos.equals(end); pos.next()) {
+		last->next = new Node(pos.get()); // forward link
+		last->next->previous = last; // back link
+		last = last->next; // move last forward for next iteration
+	}
+}
+
 void List::push_back(string element)
 {  
    Node* new_node = new Node(element);

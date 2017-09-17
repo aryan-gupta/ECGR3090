@@ -31,6 +31,8 @@ public:
       Constructs an empty list.
    */
    List();
+   
+   List(List& other);
    /**
       Appends an element to the list.
       @param element the value to append
