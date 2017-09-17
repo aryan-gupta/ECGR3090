@@ -1,0 +1,8 @@
+Lists, Stacks, and Queues
+
+Insert a node into the linked list. Using GDB print out the following to verify that the insertion happens correctly - (in class)
+Address and data of all nodes
+Address and data of the node the iterator points to
+Address and data of the new node
+Address of the next and previous node of the new node after insertion
+Addresses of previous->next and next->previous. 
