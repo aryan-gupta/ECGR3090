@@ -19,6 +19,8 @@ List::List()
 List::List(List& other) { // cant name const parameter cause its not a const function
 	// https://github.com/aryan-gupta/DataStructures/blob/develop/DList.h
 	
+	// @todo check if other is not empty
+	
 	Iterator pos = other.begin(), end = other.end();
 	
 	last = first = new Node(pos.get()); // restrictions 
