@@ -1,3 +1,5 @@
+// Write a copy constructor for the linked list of module 3. Use the following test program to test the copy constructor. 
+
 #include <string>
 #include <iostream>
 #include "list.h"
@@ -5,42 +7,50 @@
 using namespace std;
 
 int main()
-{ 
-	List names;
+{  
+   List names;
 
-	names.push_back("Tom");
-	names.push_back("Diana");
-	names.push_back("Harry");
-	names.push_back("Juliet");
+   names.push_back("Tom");
+   names.push_back("Diana");
+   names.push_back("Harry");
+   names.push_back("Juliet");
 
-	// Add a value in fourth place
+   // Add a value in fourth place
 
-	Iterator pos = names.begin();
-	pos.next();
-	pos.next();
-	pos.next();
+   Iterator pos = names.begin();
+   pos.next();
+   pos.next();
+   pos.next();
 
-	names.insert(pos, "Romeo");
+   names.insert(pos, "Romeo");
 
-	// Remove the value in second place
+   // Remove the value in second place
 
-	pos = names.begin();
-	pos.next();
+   pos = names.begin();
+   pos.next();
 
-	names.erase(pos);
+   names.erase(pos);
 
-	// Print all values
+   // Print all values
 
-	for (pos = names.begin(); !pos.equals(names.end()); pos.next())
-	{
-		cout << pos.get() << endl;
-	}
-	cout << endl;
-	List names_copy(names); //Copy constructor - homework
-	for (pos = names_copy.begin(); !pos.equals(names.end()); pos.next())
-	{
-		cout << pos.get() << endl;
-	}
+   for (pos = names.begin(); !pos.equals(names.end()); pos.next())
+   {
+      cout << pos.get() << endl;
+   }
+   cout << endl;
+   List names_copy(names); //Copy constructor - homework
+   names_copy.push_back("Shakespeare");
+   // Verify that Shakespeare was inserted. 
+   cout << "Printing new list" << endl;
+   for (pos = names_copy.begin(); !pos.equals(names.end()); pos.next())
+   {
+      cout << pos.get() << endl; // 
+   }
+   cout << "Printing original list " << endl;
+   for (pos = names.begin(); !pos.equals(names.end()); pos.next())
+   {
+      cout << pos.get() << endl;
+   }
 
-	return 0;
+   return 0;
 }
