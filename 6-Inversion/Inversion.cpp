@@ -14,6 +14,7 @@ Here's the test program -
 #include <ctime>
 #include <cstdlib>
 #include <cassert>
+#include <tuple>
 
 using namespace std;
 
@@ -46,12 +47,13 @@ int main(int argc, char **argv)
                 break;
         case 4:
                 // Custom input
-                my_vec.push_back(4);
-                my_vec.push_back(5);
-                my_vec.push_back(6);
-                my_vec.push_back(1);
                 my_vec.push_back(2);
+                my_vec.push_back(4);
+                my_vec.push_back(1);
                 my_vec.push_back(3);
+                my_vec.push_back(5);
+                // my_vec.push_back(6);
+               // my_vec.push_back(3);
                 break;
         default: 
                 cout << "Invalid input" << endl;
@@ -65,7 +67,7 @@ int main(int argc, char **argv)
     cout << endl << endl;
     
     vector<int> sort_vec(my_vec);
-    cout << "Number of inversions " << mergeSort(my_vec, sort_vec, 0, my_vec.size()) << endl;
+    cout << "Number of inversions " << countInv(my_vec, sort_vec, 0, my_vec.size()) << endl;
 
     // Sorted array
     for (it = sort_vec.begin(); it != sort_vec.end(); ++it)
@@ -73,8 +75,86 @@ int main(int argc, char **argv)
     cout << endl;
 }
 
+template <typename TYPE>
+void pretty(std::vector<TYPE>& a) {
+	for (TYPE e : a) {
+		std::cout << e << ' ';
+	}
+	std::cout << std::endl;
+}
+
+
+template <typename ITER>
+std::tuple<
+	std::vector<typename std::iterator_traits<ITER>::value_type>,
+	int
+> merge_sort_merge(ITER lbegin, const ITER lend, ITER rbegin, const ITER rend) {
+	typedef typename std::iterator_traits<ITER>::value_type TYPE;
+	
+	int inversion = 0;
+	std::vector<TYPE> combined;
+	while (lbegin != lend and rbegin != rend) {
+		// combined.push_back((lbegin < rbegin)? *lbegin++ : *rbegin++); // push back the smaller
+		// typename std::vector<TYPE>::iterator it = (lbegin < rbegin)? lbegin : rbegin;
+		
+		if (*lbegin <= *rbegin) {
+			combined.push_back(*lbegin++);
+		} else {
+			inversion += std::distance(lbegin, lend); // http://www.geeksforgeeks.org/counting-inversions/
+			combined.push_back(*rbegin++);
+		}
+		
+	}
+	
+	combined.insert(combined.end(), lbegin, lend);
+	combined.insert(combined.end(), rbegin, rend);
+	
+	return {combined, inversion};
+}
+
+template <typename ITER>
+std::tuple<
+	std::vector<typename std::iterator_traits<ITER>::value_type>, // vector of values held by input ITER
+	int // number of inversions
+> merge_sort(ITER begin, ITER end) {
+	// if base case (only one element)
+	int len = std::distance(begin, end);
+	if (len < 2) { // if we are sorted then return cause its already sorted
+		return {{begin, end}, 0};
+	}
+	
+	auto mid = std::next(begin, len / 2); // caculate mid point
+	/* # When C++17 isnt available on your compiler
+	// split and recusively call for first half and second half
+	auto [c1, inv1] = merge_sort(begin, mid);
+	auto [c2, inv2] = merge_sort(mid, end);
+	
+	auto [sorted, inv] = merge_sort_merge(c1.begin(), c1.end(), c2.begin(), c2.begin()); // merge the 2 halves and get the number of inversions
+	
+	return {sorted, inv + inv1 + inv2}; // return the amout of inversions and sorted vector
+	*/
+	typedef typename std::iterator_traits<ITER>::value_type TYPE;
+	
+	std::vector<TYPE> c1, c2, sorted;
+	int inv, inv1, inv2;
+	
+	std::tie(c1, inv1) = merge_sort(begin, mid);
+	std::tie(c2, inv2) = merge_sort(mid, end);
+	
+	std::tie(sorted, inv) = merge_sort_merge(c1.begin(), c1.end(), c2.begin(), c2.end());
+	
+	return {sorted, inv + inv1 + inv2}; // return the amout of inversions and sorted vector
+}
+
 int countInv(vector<int> &in_vec, vector<int> &out_vec, int begin, int end) {
-
- // Your code goes here
-
+	// auto mid = std::next(std::distance(in_vec.end(), in_vec.begin()) / 2); // caculate mid point
+	
+	std::vector<int> sorted;
+	int inv;
+	
+	std::tie(sorted, inv) = merge_sort(in_vec.begin(), in_vec.end());
+	
+	out_vec = sorted;
+	
+	return inv;
 }
