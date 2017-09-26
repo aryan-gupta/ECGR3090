@@ -34,23 +34,17 @@ vector<int> intersection(const vector<int>&a, const vector<int>& b) {
 	std::vector<int>::const_iterator abegin = a.begin(), bbegin = b.begin();
 	// auto rend = ret.begin();
 	
-	while (abegin != a.end() and bbegin != b.end()) {
-		if (ret.size() >= 1) {
-			if (*abegin == *(ret.rbegin())) { // if repeat from either list, then dont add it
-				++abegin;
-				continue;
-			}
-			
-			if (*bbegin == *(ret.rbegin())) {
-				++bbegin;
-				continue;
-			}
+	while (abegin != a.end() and bbegin != b.end()) { // go through 2 arrays
+		if (*abegin == *bbegin) {
+			if (!(ret.size() >= 1 and *abegin == *ret.rbegin())) // checks already created list for duplicates
+				ret.push_back(*abegin); // not found in either array or in already created array
+			++abegin;
+			++bbegin; // increment both cause oth points to the same value
+			continue;
 		}
-		ret.push_back((*abegin < *bbegin)? *abegin++: *bbegin++); // add the lesser item
+		
+		(*abegin < *bbegin)? abegin++ : bbegin++; // different values, increment lesser one
 	}
 	
-	ret.insert(ret.end(), abegin, a.end()); // add the remaining items
-	ret.insert(ret.end(), bbegin, b.end());
-
 	return ret;
 }
