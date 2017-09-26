@@ -28,7 +28,29 @@ int main() {
 }
 
 vector<int> intersection(const vector<int>&a, const vector<int>& b) {
+	// typedef std::vector<int>::iterator IT;
+	std::vector<int> ret;
+	
+	std::vector<int>::const_iterator abegin = a.begin(), bbegin = b.begin();
+	// auto rend = ret.begin();
+	
+	while (abegin != a.end() and bbegin != b.end()) {
+		if (ret.size() >= 1) {
+			if (*abegin == *(ret.rbegin())) { // if repeat from either list, then dont add it
+				++abegin;
+				continue;
+			}
+			
+			if (*bbegin == *(ret.rbegin())) {
+				++bbegin;
+				continue;
+			}
+		}
+		ret.push_back((*abegin < *bbegin)? *abegin++: *bbegin++); // add the lesser item
+	}
+	
+	ret.insert(ret.end(), abegin, a.end()); // add the remaining items
+	ret.insert(ret.end(), bbegin, b.end());
 
- // Your code here
-
+	return ret;
 }
