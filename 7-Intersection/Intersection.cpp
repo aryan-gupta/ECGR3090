@@ -68,9 +68,15 @@ vector<int> intersection(const vector<int>&a, const vector<int>& b) {
 	
 	while (abegin != a.end() and bbegin != b.end()) { // go through 2 arrays
 		if (*abegin == *bbegin) {
-			if (!(ret.size() >= 1 and *abegin == *ret.rbegin())) // checks already created list for duplicates https://en.wikipedia.org/wiki/Short-circuit_evaluation
-			//if (ret.size() == 0 or *abegin != *ret.rbegin()) // demorgans law -- makes things more efficient
+			// https://en.wikipedia.org/wiki/Short-circuit_evaluation
+			if (!(ret.size() >= 1 and *abegin == *ret.rbegin())) // checks already created list for duplicates
 				ret.push_back(*abegin); // not found in either array or in already created array
+			
+			// I had to different if statements the one above and this on:
+			// if (ret.size() == 0 or *abegin != *ret.rbegin()) // demorgans law -- makes things more efficient
+			// after assembly dumb of both if statements, turns out that the compiler optimizations
+			// creates 2 line-by-line identical binaries. Chose to keep the one above as it is easier to understand
+			
 			++abegin;
 			++bbegin; // increment both cause oth points to the same value
 			continue;
