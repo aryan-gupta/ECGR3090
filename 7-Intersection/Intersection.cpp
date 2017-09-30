@@ -28,15 +28,14 @@ int main() {
 }
 
 vector<int> intersection(const vector<int>&a, const vector<int>& b) {
-	// typedef std::vector<int>::iterator IT;
 	std::vector<int> ret;
 	
 	std::vector<int>::const_iterator abegin = a.begin(), bbegin = b.begin();
-	// auto rend = ret.begin();
 	
 	while (abegin != a.end() and bbegin != b.end()) { // go through 2 arrays
 		if (*abegin == *bbegin) {
-			if (!(ret.size() >= 1 and *abegin == *ret.rbegin())) // checks already created list for duplicates
+			// if (!(ret.size() >= 1 and *abegin == *ret.rbegin())) // checks already created list for duplicates https://en.wikipedia.org/wiki/Short-circuit_evaluation
+			if (ret.size() == 0 or *abegin != *ret.rbegin())) // demorgans law -- makes things more efficient
 				ret.push_back(*abegin); // not found in either array or in already created array
 			++abegin;
 			++bbegin; // increment both cause oth points to the same value
