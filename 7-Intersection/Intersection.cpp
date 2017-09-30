@@ -6,6 +6,10 @@ A brute force O(n^2) algorithm is easily obtained. Devise a O(n) algorithm.
 */
 #include <iostream>
 #include <vector>
+#include <chrono>
+#include <random>
+#include <functional>
+#include <algorithm>
 
 using namespace std;
 
@@ -15,14 +19,44 @@ const int MAX_VAL = 100;
 vector<int> intersection(const vector<int>&a, const vector<int>& b);
 
 int main() {
-    vector<int> a = {2,3,3,5,5,6,7,8,8,12};
-    vector<int> b = {5,5,6,8,8,9,10,10};
+    using hrc = std::chrono::high_resolution_clock;
+	
+	// http://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution
+	std::random_device rd; // I have no idea what im doing
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> random(1, 100); 
+	
+	auto crand = std::bind(random, gen);
+	
+	// vector<int> a = {2,3,3,5,5,6,7,8,8,12};
+    // vector<int> b = {5,5,6,8,8,9,10,10};
     
+	vector<int> a, b;
+	long long len = 10000000;
+	
+	a.reserve(len + 10);
+	b.reserve(len + 10);
+	
+	while (len --> 0) {
+		a.push_back(crand());
+		b.push_back(crand());
+	}
+	
+	std::sort(a.begin(), a.end());
+	std::sort(b.begin(), b.end());
+	
+	auto start = hrc::now();
     vector<int> c = intersection(a,b);
-    for (auto elem : c)
-        cout << elem << " ";
-    cout << endl;
+    auto end = hrc::now();
+	
+	std::chrono::duration<double> elapsed = end - start;
+	
+	// for (auto elem : c)
+        // cout << elem << " ";
+    // cout << endl;
     
+	std::cout << "Time: " << elapsed.count() << endl;
+	
     return 0;
     
 }
@@ -34,8 +68,8 @@ vector<int> intersection(const vector<int>&a, const vector<int>& b) {
 	
 	while (abegin != a.end() and bbegin != b.end()) { // go through 2 arrays
 		if (*abegin == *bbegin) {
-			// if (!(ret.size() >= 1 and *abegin == *ret.rbegin())) // checks already created list for duplicates https://en.wikipedia.org/wiki/Short-circuit_evaluation
-			if (ret.size() == 0 or *abegin != *ret.rbegin())) // demorgans law -- makes things more efficient
+			if (!(ret.size() >= 1 and *abegin == *ret.rbegin())) // checks already created list for duplicates https://en.wikipedia.org/wiki/Short-circuit_evaluation
+			//if (ret.size() == 0 or *abegin != *ret.rbegin()) // demorgans law -- makes things more efficient
 				ret.push_back(*abegin); // not found in either array or in already created array
 			++abegin;
 			++bbegin; // increment both cause oth points to the same value
