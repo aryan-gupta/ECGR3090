@@ -19,15 +19,17 @@ c. Code your solution (the better one) in the form of the function indicated bel
 
 #include <iostream>
 #include <vector>
+using std::vector;
 
+bool hasNumber(vector<int>& vec, int K);
 
 int main() {
 	std::vector<int> vec1 = {8, 4, 1, 6};
-	pretty(vec1);
+	// pretty(vec1);
 	
 	bool b1 = hasNumber(vec1, 10);
 	
-	std::cout << (b1)? "Has Number" : "Does not have number" << std::endl;
+	std::cout << ((b1)? "Has Number" : "Does not have number") << std::endl;
 }
 
 bool hasNumber(vector<int>& vec, int K) {
@@ -38,8 +40,30 @@ bool hasNumber(vector<int>& vec, int K) {
 	// if found sum, return true
 	// else return false
 	
-
+	/// todo typedef these
+	std::vector<int>::const_iterator fbegin = vec.begin();
+	std::vector<int>::reverse_iterator rbegin = vec.rbegin();
 	
+	while (fbegin != vec.end() and rbegin != vec.rend()) {
+		/// todo typedef this
+		int sum = *fbegin + *rbegin;
+		if (sum == K)
+			return true;
+		
+		/// there should be a way to make this better
+		if (sum > K) // sum is too big, decrement larger value
+			if (*fbegin > *rbegin) 
+				++fbegin;
+			else
+				++rbegin;
+		else
+			if (*fbegin > *rbegin) 
+				++rbegin;
+			else
+				++fbegin;
+	}
+	
+	return false;
 }
 /*
 Write the pseudo code for the 2 solutions in comments. Please upload your file as <your_lastname>.cpp
