@@ -46,7 +46,7 @@ bool hasNumber(vector<int>& vec, int K) {
 	std::vector<int>::const_iterator fbegin = vec.begin();
 	std::vector<int>::reverse_iterator rbegin = vec.rbegin();
 	
-	while (fbegin != vec.end() and rbegin != vec.rend()) {
+	while (fbegin != std::next(vec.begin(), len/2) and rbegin != std::next(vec.rend(), len/2)) {
 		decltype(*fbegin) sum = *fbegin + *rbegin;
 		
 		if (sum == K)
