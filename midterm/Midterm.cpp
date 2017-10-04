@@ -20,11 +20,12 @@ c. Code your solution (the better one) in the form of the function indicated bel
 #include <iostream>
 #include <vector>
 using std::vector;
+#include <algorithm>
 
 bool hasNumber(vector<int>& vec, int K);
 
 int main() {
-	std::vector<int> vec1 = {8, 4, 1, 6};
+	std::vector<int> vec1 = {8, 0, 4, 9, 9, 9, 9, 9, 9, 9, 9, 5, 5, 7, 3};
 	// pretty(vec1);
 	
 	bool b1 = hasNumber(vec1, 10);
@@ -40,13 +41,14 @@ bool hasNumber(vector<int>& vec, int K) {
 	// if found sum, return true
 	// else return false
 	
-	/// todo typedef these
+	std::sort(vec.begin(), vec.end());
+	
 	std::vector<int>::const_iterator fbegin = vec.begin();
 	std::vector<int>::reverse_iterator rbegin = vec.rbegin();
 	
 	while (fbegin != vec.end() and rbegin != vec.rend()) {
-		/// todo typedef this
-		int sum = *fbegin + *rbegin;
+		decltype(*fbegin) sum = *fbegin + *rbegin;
+		
 		if (sum == K)
 			return true;
 		
