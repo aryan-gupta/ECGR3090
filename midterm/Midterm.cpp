@@ -31,7 +31,14 @@ int main() {
 }
 
 bool hasNumber(vector<int>& vec, int K) {
-
+	// create douplicate array
+	// reverse duplicate array? // go through backwards
+	// go through both array
+	// if sum of values is to big
+	// decrement large value
+	// else decremt smaller value
+	// if found sum, return true
+	// else return false
 	
 }
 /*
