@@ -10,6 +10,13 @@ b. Give an O(N log N) algorithm to solve the problem.
 c. Code your solution (the better one) in the form of the function indicated below. Also, write a test program to see if your code works. You are allowed to use any library from the STL.
 */
 
+// O(N^2) algorithm:
+// foreach element in array
+//    for element2 from element.next to array.end
+//        if element + element2 == 10
+//            return true
+// return false
+
 #include <iostream>
 #include <vector>
 
