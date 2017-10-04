@@ -9,8 +9,23 @@ b. Give an O(N log N) algorithm to solve the problem.
 
 c. Code your solution (the better one) in the form of the function indicated below. Also, write a test program to see if your code works. You are allowed to use any library from the STL.
 */
-bool hasNumber(vector<int>&, int K) {
 
+#include <iostream>
+#include <vector>
+
+
+int main() {
+	std::vector<int> vec1 = {8, 4, 1, 6};
+	pretty(vec1);
+	
+	bool b1 = hasNumber(vec1, 10);
+	
+	std::cout << (b1)? "Has Number" : "Does not have number" << std::endl;
+}
+
+bool hasNumber(vector<int>& vec, int K) {
+
+	
 }
 /*
 Write the pseudo code for the 2 solutions in comments. Please upload your file as <your_lastname>.cpp
