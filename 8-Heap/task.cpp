@@ -1,6 +1,6 @@
 #include "task.h"
 
-Task::Task() {}
+// Task::Task() {}
 
 Task::Task(string description, int priority)
 {
