@@ -2,6 +2,7 @@
 #define HEAP_H
 
 #include <vector>
+#include <functional>
 
 using namespace std;
 
@@ -90,5 +91,123 @@ private:
    
    vector<T> elements;   
 };
+
+template <typename T>
+Heap<T>::Heap()
+: elements{}
+{ }
+
+
+template <typename T>
+void Heap<T>::push(T element) {
+	std::function<void (size_t)> heapifyup = [&](size_t idx){
+		size_t sz = elements.size();
+		size_t pt = get_parent_index(idx);
+		
+		if (idx < sz and elements[pt] < elements[idx]) {
+			std::swap(elements[pt], elements[idx]);
+			heapifyup(pt);
+		}
+	};
+	
+	elements.push_back(element);
+	heapifyup(elements.size() - 1);
+}
+
+
+template <typename T>
+T Heap<T>::top() const {
+	// let vector handle empty heap
+	return elements.at(0);
+}
+
+
+template <typename T>
+void Heap<T>::pop() {
+	elements[0] = elements.back(); // swap the last and first
+	elements.pop_back(); // remove the last 
+	fix_heap(); // fix heap (heapify down)
+}
+
+
+template <typename T>
+int Heap<T>::size() const {
+	return elements.size(); // size_t?
+}
+
+
+template <typename T>
+void Heap<T>::fix_heap() {
+	std::function<void (size_t)> heapifydown = [&](size_t idx) {
+		size_t sz = elements.size();
+		size_t lc = get_left_child_index(idx);
+		size_t rc = get_right_child_index(idx);
+		size_t max = idx;
+		
+		if (lc < sz and elements[max] < elements[lc])
+			max = lc;
+		
+		if (rc < sz and elements[max] < elements[rc])
+			max = rc;
+		
+		if (idx != max) {
+			std::swap(elements[idx], elements[max]);
+			heapifydown(max);
+		}
+	};
+	
+	heapifydown(0);
+}
+
+
+template <typename T>
+int Heap<T>::get_left_child_index(int index) const {
+	// im going to let bounds checking be handled
+	// upframe (downframe?) as this is a private
+	// member
+	return index * 2 + 1;
+}
+
+
+template <typename T>
+int Heap<T>::get_right_child_index(int index) const {
+	// im going to let bounds checking be handled
+	// upframe (downframe?) as this is a private
+	// member
+	return index * 2 + 2;
+}
+
+
+template <typename T>
+int Heap<T>::get_parent_index(int index) const {
+	// for an index of 6, the parent is
+	// 5/2 (integer division) or 2 and
+	// for an index of 5 the parent is
+	// 4/2 or 2
+	return (index - 1) / 2;
+}
+
+
+template <typename T>
+T Heap<T>::get_left_child(int index) const {
+	// going to relly on the vector's bound checking
+	return elements.at(get_left_child_index(index));
+}
+
+
+template <typename T>
+T Heap<T>::get_right_child(int index) const {
+	// going to relly on the vector's bound checking
+	return elements.at(get_right_child_index(index));
+}
+
+
+template <typename T>
+T Heap<T>::get_parent(int index) const {
+	// going to relly on the vector's bound checking
+	return elements.at(get_parent_index(index));
+}
+
+
 
 #endif
