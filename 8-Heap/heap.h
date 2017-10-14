@@ -94,8 +94,7 @@ private:
 
 template <typename T>
 Heap<T>::Heap()
-: elements{}
-{ }
+: elements{} { }
 
 
 template <typename T>
@@ -104,13 +103,13 @@ void Heap<T>::push(T element) {
 		size_t sz = elements.size();
 		size_t pt = get_parent_index(idx);
 		
-		if (idx < sz and elements[pt] < elements[idx]) {
+		if (idx != 0 and elements[idx] < elements[pt]) {
 			std::swap(elements[pt], elements[idx]);
 			heapifyup(pt);
 		}
 	};
 	
-	elements.push_back(element);
+	elements.push_back(std::move(element));
 	heapifyup(elements.size() - 1);
 }
 
@@ -144,10 +143,10 @@ void Heap<T>::fix_heap() {
 		size_t rc = get_right_child_index(idx);
 		size_t max = idx;
 		
-		if (lc < sz and elements[max] < elements[lc])
+		if (lc < sz and elements[lc] < elements[max])
 			max = lc;
 		
-		if (rc < sz and elements[max] < elements[rc])
+		if (rc < sz and elements[rc] < elements[max])
 			max = rc;
 		
 		if (idx != max) {
@@ -207,7 +206,5 @@ T Heap<T>::get_parent(int index) const {
 	// going to relly on the vector's bound checking
 	return elements.at(get_parent_index(index));
 }
-
-
 
 #endif
