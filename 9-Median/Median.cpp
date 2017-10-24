@@ -66,8 +66,8 @@ int find_median(priority_queue<int, vector<int>, greater<int>>& h_high, priority
 	}
 	
 	switch (static_cast<int>(h_high.size()) - static_cast<int>(h_low.size())) {
-		case 0: // if they have the same length
-			return (h_high.top() + h_low.top()) / 2;
+		case 0: // if they have the same length return the larger one
+			return h_high.top();
 		case 1: // h_high is larger
 			return h_high.top();
 		case -1: // h_low is larger
