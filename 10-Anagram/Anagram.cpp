@@ -23,9 +23,42 @@ int main()
    return 0;
 }
 
+// placement independent string hash. 
+struct pi_str_hash {
+	size_t operator()(const std::string& str) const {
+		size_t hash{};
+		std::hash<char> alg;
+		for (char ch : str) { // we want to hash the actual char and not the placement
+			hash ^= alg(ch);
+		}
+		
+		return hash;
+	}
+};
+
 vector<vector<string>> findAnagrams(const vector<string>& dict)
 {
-
-// Your code here...
-
+	std::unordered_map<
+		std::string,
+		std::vector<std::string>,
+		pi_str_hash
+	> anagrams;
+	
+	// pi_str_hash h;
+	
+	for (auto& str : dict) {
+		// std::cout << h(str) << std::endl;
+		anagrams[str].push_back(str);
+		
+	}
+	
+	std::vector<std::vector<std::string>> ret_val;
+	for (auto begin = anagrams.begin(), end = anagrams.end(); begin != end; ++begin) {
+		std::cout << begin->second.size() << std::endl;
+		if (begin->second.size() > 1)
+			ret_val.push_back(begin->second);
+	}
+	
+	return ret_val;
+	
 }
