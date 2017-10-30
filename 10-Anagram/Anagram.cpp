@@ -40,21 +40,22 @@ vector<vector<string>> findAnagrams(const vector<string>& dict)
 {
 	std::unordered_map<
 		std::string,
-		std::vector<std::string>,
-		pi_str_hash
+		std::vector<std::string>// ,
+		// pi_str_hash
 	> anagrams;
 	
 	// pi_str_hash h;
 	
 	for (auto& str : dict) {
-		// std::cout << h(str) << std::endl;
-		anagrams[str].push_back(str);
+		std::string str_sort{str};
+		std::sort(str_sort.begin(), str_sort.end());
+		anagrams[str_sort].push_back(str);
 		
 	}
 	
 	std::vector<std::vector<std::string>> ret_val;
 	for (auto begin = anagrams.begin(), end = anagrams.end(); begin != end; ++begin) {
-		std::cout << begin->second.size() << std::endl;
+		// std::cout << begin->second.size() << std::endl;
 		if (begin->second.size() > 1)
 			ret_val.push_back(begin->second);
 	}
