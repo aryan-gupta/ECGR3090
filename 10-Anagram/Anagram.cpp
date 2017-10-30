@@ -24,8 +24,8 @@ int main()
 }
 
 // placement independent string hash. 
-struct pi_str_hash {
-	const static unsigned shift = 15;
+struct pi_str_hash { /// todo test collision resistance of this guy
+	constexpr static unsigned shift = 15;
 	
 	size_t operator()(const std::string& str) const {
 		using ull = unsigned long long;
@@ -46,18 +46,23 @@ struct pi_str_hash {
 };
 
 struct pi_str_equal {
+	const static pi_str_hash h; // prevent it from being recreated eveytime we call this callable
+	
 	bool operator() (const std::string& a, const std::string& b) const {
-		pi_str_hash h;
 		return h(a) == h(b);
 	}
 };
 
+const pi_str_hash pi_str_equal::h{}; // instantize out of class cause ints are the only
+// ones that can be instantize in class
+
 vector<vector<string>> findAnagrams(const vector<string>& dict)
 {
+	
 	using anagram_map_t = std::unordered_map< std::string, std::vector<std::string>, pi_str_hash, pi_str_equal>;
 	anagram_map_t anagrams;
 	
-	for (auto str : dict) {
+	for (const auto& str : dict) {
 		anagrams[str].push_back(str);
 	}
 	
