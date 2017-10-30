@@ -33,32 +33,40 @@ struct pi_str_hash {
 		
 		for (char ch : str) { // we want to hash the actual char and not the placement
 			ull num = ch; // cast
-			unsigned shift = num % 15;
-			num <<= shift;
+			num <<= (num % 15);
 			hash += alg(num);
 		}
 		
-		// hash %= std::numeric_limits<size_t>::max();
+		hash %= std::numeric_limits<size_t>::max();
 		
 		return hash;
 	}
 };
 
+struct pi_str_equal {
+	bool operator() (const std::string& a, const std::string& b) const {
+		pi_str_hash h;
+		return h(a) == h(b);
+	}
+};
+
 vector<vector<string>> findAnagrams(const vector<string>& dict)
 {
-	using anagram_map_t = std::unordered_map< std::string, std::vector<std::string>>;//, pi_str_hash>;
+	using anagram_map_t = std::unordered_map< std::string, std::vector<std::string>, pi_str_hash, pi_str_equal>;
 	anagram_map_t anagrams;
 	
 	typename anagram_map_t::hasher h = anagrams.hash_function();
 	
-	for (auto& str : dict) {
+	for (auto str_ : dict) {
+		std::string str{str_};
+		anagrams[str].push_back(str);
 		std::cout << h(str) << std::endl;
 		
-		//anagrams[str].push_back(str);
+		// std::string sorted{str};
+		// std::sort(sorted.begin(), sorted.end());
+		// std::cout << h(sorted) << std::endl;
 		
-		std::string sorted{str};
-		std::sort(sorted.begin(), sorted.end());
-		anagrams[sorted].push_back(str);
+		// anagrams[sorted].push_back(str);
 	}
 	
 	std::vector<std::vector<std::string>> ret_val;
