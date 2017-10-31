@@ -32,28 +32,17 @@ int main()
 
 // placement independent string hash. 
 struct pi_str_hash { /// todo test collision resistance of this guy
-	constexpr static unsigned shift = 64;
-	constexpr static unsigned max = 0xFFFF;
+	//constexpr static unsigned shift = 64;
+	//constexpr static unsigned max = 0xFFFF;
 	
 	size_t operator()(const std::string& str) const {
 	
-		uint64_t pre_hash{str.size() << 5ULL};
+		uint64_t pre_hash{0xc70f6907UL};
 		std::hash<uint64_t> alg;
 		
 		for (char ch : str) { // we want to hash the actual char and not the placement
 			uint64_t ch64 = ch * uint64_t(ch) * ch; // cast -- MAX 16777216 (25 bits)
-			
-			//uint64_t num = ch64 << ((int(ch) * ch) % shift);
-			// uint64_t num = ch64 << shift / 4;
-			// pre_hash %= num;
-			
-			// cout << num << endl;
-			
-			// for (int i = 0; i < 16; ++i) {
-				// ch64 <<= 3;
-				pre_hash += ch64;
-			// }
-			
+			pre_hash += ch64;
 		}
 		
 		size_t hash = pre_hash % std::numeric_limits<size_t>::max();
