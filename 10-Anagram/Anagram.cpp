@@ -31,9 +31,9 @@ int main()
 }
 
 // placement independent string hash. 
-struct pi_str_hash { /// todo test collision resistance of this guy
-	constexpr static unsigned shift = 64;
-	constexpr static unsigned max = 0xFFFF;
+struct pi_str_hash {
+	/// this algorithm has a collision ratio of 0.000851547 with only lowercase letters
+	/// and 0.0112282 with alphanumeric characters
 	
 	size_t operator()(const std::string& str) const {
 	
@@ -43,16 +43,10 @@ struct pi_str_hash { /// todo test collision resistance of this guy
 		for (char ch : str) { // we want to hash the actual char and not the placement
 			uint64_t ch64 = ch * uint64_t(ch) * ch; // cast -- MAX 16777216 (25 bits)
 			
-			//uint64_t num = ch64 << ((int(ch) * ch) % shift);
-			// uint64_t num = ch64 << shift / 4;
-			// pre_hash %= num;
-			
-			// cout << num << endl;
-			
-			// for (int i = 0; i < 16; ++i) {
-				// ch64 <<= 3;
+			for (int i = 0; i < 16; ++i) {
+				ch64 <<= 3;
 				pre_hash += ch64;
-			// }
+			}
 			
 		}
 		
