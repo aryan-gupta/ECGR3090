@@ -96,19 +96,19 @@ vector<vector<string>> findAnagrams(const vector<string>& dict)
 	
 }
 
-float test_hash() {
+float test_hash() { // lol this is becoming messy
 	const static int MAX_SIZE = 3;
 	
 	unsigned long long total_num{}, found_hash{};
 	
 	//std::hash<std::string> hasher;
 	pi_str_hash hasher;
-	std::string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890$";
-	std::string to_test = "AAA";
+	std::string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890$";
+	std::string to_test = "aaa";
 	
 	// std::cout << std::pow(chars.size() - 1, to_test.size());
 	
-	unordered_set<size_t> rainbow_table; // im testing collisions not going to worry about pair
+	unordered_map<size_t, std::string> rainbow_table; // im testing collisions not going to worry about pair
 	
 	// for (int size = 1; size < MAX_SIZE; ++size) {
 		std::string end(3, '0');
@@ -117,12 +117,22 @@ float test_hash() {
 			
 			auto hash = hasher(to_test);
 			++total_num;
-			if (rainbow_table.find(hash) != rainbow_table.end()) {
-				++found_hash;
-				// std::cout << "Found Collision" << std::endl;
-			}
 			
-			rainbow_table.insert(hash);
+			std::string sorted{to_test};
+			std::sort(sorted.begin(), sorted.end());			
+			if (rainbow_table.find(hash) != rainbow_table.end()) {
+				auto a = rainbow_table.find(hash);
+				std::string sorted_org{a->second};
+				std::sort(sorted_org.begin(), sorted_org.end());
+				
+				if (sorted_org != sorted) {
+					std::cout << a->first << '\t' << a->second << '\t' << to_test << endl;
+					++found_hash;
+				}
+
+			} else {
+				rainbow_table[hash] = to_test;
+			}
 			
 			// incrment
 			to_test[to_test.size() - 1] = chars.at(chars.find(to_test[to_test.size() - 1]) + 1); // increment letter
