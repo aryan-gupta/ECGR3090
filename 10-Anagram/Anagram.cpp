@@ -37,16 +37,22 @@ struct pi_str_hash { /// todo test collision resistance of this guy
 	
 	size_t operator()(const std::string& str) const {
 	
-		uint64_t pre_hash{};
+		uint64_t pre_hash{str.size() << 5ULL};
 		std::hash<uint64_t> alg;
 		
 		for (char ch : str) { // we want to hash the actual char and not the placement
-			uint64_t sh = ch; // cast
-			uint64_t num = sh << (sh % shift);
-			pre_hash ^= alg(num);
-			pre_hash ^= (num % max);
-			pre_hash %= max;
-			//pre_hash <<= sh;
+			uint64_t ch64 = ch * uint64_t(ch) * ch; // cast -- MAX 16777216 (25 bits)
+			
+			//uint64_t num = ch64 << ((int(ch) * ch) % shift);
+			// uint64_t num = ch64 << shift / 4;
+			// pre_hash %= num;
+			
+			// cout << num << endl;
+			
+			// for (int i = 0; i < 16; ++i) {
+				// ch64 <<= 3;
+				pre_hash += ch64;
+			// }
 			
 		}
 		
@@ -74,6 +80,7 @@ vector<vector<string>> findAnagrams(const vector<string>& dict)
 	anagram_map_t anagrams;
 	
 	for (const auto& str : dict) {
+		clog << anagram_map_t::hasher{}(str) << endl;
 		anagrams[str].push_back(str);
 	}
 	
