@@ -26,7 +26,6 @@ int main()
          cout << endl;
     }
 	
-	test_hash();
    return 0;
 }
 
@@ -146,7 +145,7 @@ float test_hash() { // lol this is becoming messy
 		// to_test.push_back('A');
 	// }
 	
-	std::cout << double(found_hash) / total_num << std::endl;
+	// std::cout << double(found_hash) / total_num << std::endl;
 	
 	return float(found_hash) / total_num;
 	
