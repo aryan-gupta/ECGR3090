@@ -48,12 +48,36 @@ void BinarySearchTree::pretty_display() {
 
 
 Node* BinarySearchTree::findNode(int key) const {
+	Node* current = root;
 	
+	while (current != nullptr) {
+		if (current->data == key)
+			return current;
+		
+		if (current->data <= key)
+			current = current->right;
+		else
+			current = current->left;
+	}
+	
+	return nullptr;
 }
 
 
 Node* BinarySearchTree::findParentNode(Node *node) const {
+	Node* current = root;
 	
+	while (current != nullptr) {
+		if (current->left == node or current->right == node)
+			return current;
+		
+		if (current->data <= key)
+			current = current->right;
+		else
+			current = current->left;
+	}
+	
+	return nullptr;
 }
 
 
