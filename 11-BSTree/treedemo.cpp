@@ -19,7 +19,6 @@ int main()
    t.insert("G");
    t.insert("H");
    t.insert("J");
-   // exit(0);
    t.erase("A"); // Removing leaf
    t.erase("B"); // Removing element with one child
    t.erase("F"); // Removing element with two children

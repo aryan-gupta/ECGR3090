@@ -69,10 +69,11 @@ void BinarySearchTree::erase(string element) {
 		
 		if (leastR->right != nullptr)
 			lrParent->left = leastR->right; // we still have leastR so we dont lose the node
+		else 
+			lrParent->left = nullptr;
 		
 		rm->data = std::move(leastR->data);
 		delete leastR;
-		lrParent->left = nullptr;
 	};
 	
 	std::function<void(Node*&)> erase_local = [&](Node*& rt) {
