@@ -1,6 +1,9 @@
 
 #include <iostream>
 #include <functional>
+#include <deque>
+#include <vector>
+
 #include "tree_rotations.h"
 
 BinarySearchTree::BinarySearchTree() : root{} { /* No Code */ }
@@ -43,7 +46,33 @@ void BinarySearchTree::insert(int element) {
 
 
 void BinarySearchTree::pretty_display() {
+	int width = maxHeight(root);
+	std::vector<std::deque<Node*>> tree(width);
+	cout << width << endl;
+	tree[0].push_back(root);
+	for (int i = 1; i < width - 1; ++i) {
+		cout << tree[i - 1].size() << endl;
+		for (int j = 0; j < tree[i - 1].size(); ++j) {
+			cout << i << ' ' << j << '\t' << tree[i - 1][j]->key << endl;
+			if (tree[i - 1][j] == nullptr) {
+				tree[i].push_back(nullptr);
+				tree[i].push_back(nullptr);
+			} else {
+				tree[i].push_back(tree[i - 1][j]->left);
+				tree[i].push_back(tree[i - 1][j]->right);
+			}
+		}
+	}
 	
+	for (auto e1 : tree) {
+		for (auto e2 : e1) {
+			if (e2 == nullptr)
+				cout << ' ';
+			else 
+				cout << e2->key;
+		}
+		cout << endl;
+	}
 }
 
 
@@ -51,10 +80,10 @@ Node* BinarySearchTree::findNode(int key) const {
 	Node* current = root;
 	
 	while (current != nullptr) {
-		if (current->data == key)
+		if (current->key == key)
 			return current;
 		
-		if (current->data <= key)
+		if (current->key <= key)
 			current = current->right;
 		else
 			current = current->left;
@@ -71,7 +100,7 @@ Node* BinarySearchTree::findParentNode(Node *node) const {
 		if (current->left == node or current->right == node)
 			return current;
 		
-		if (current->data <= key)
+		if (current->key <= node->key)
 			current = current->right;
 		else
 			current = current->left;
@@ -82,17 +111,34 @@ Node* BinarySearchTree::findParentNode(Node *node) const {
 
 
 pivotFamily BinarySearchTree::findFamily(Node *pivot) {
-	
+	Node* parent = findParentNode(pivot);
+	return {pivot, pivot->left, pivot->right, parent, parent->left, parent->right};
 }
 
 
 void BinarySearchTree::rotateRight(Node *pivot) {
-	
+	auto fam  = findFamily(pivot);
+	auto root = findParentNode(fam.pivot_parent);
+	if (root->left == fam.pivot_parent) // we are under the left root
+		root->left = fam.pivot;
+	else // we are under the right root
+		root->right = fam.pivot;
+		
+	fam.pivot_parent->right = fam.pivot->left;
+	fam.pivot->left = fam.pivot_parent;
 }
 
 
 void BinarySearchTree::rotateLeft(Node *pivot) {
-	
+	auto fam  = findFamily(pivot);
+	auto root = findParentNode(fam.pivot_parent); // oops, this shadows a member data, oh well
+	if (root->left == fam.pivot_parent) // we are under the left root
+		root->left = fam.pivot;
+	else // we are under the right root
+		root->right = fam.pivot;
+		
+	fam.pivot_parent->left = fam.pivot->right;
+	fam.pivot->right = fam.pivot_parent;
 }
 
 
@@ -102,7 +148,9 @@ void BinarySearchTree::add_node(Node* parent, Node* new_node) const {
 
 
 int BinarySearchTree::maxHeight(Node *p) const {
-	
+	if (p == nullptr) return 0;
+	int lHeight = maxHeight(p->left), rHeight = maxHeight(p->right);
+	return (lHeight > rHeight)? lHeight + 1 : rHeight + 1;
 }
 
 
