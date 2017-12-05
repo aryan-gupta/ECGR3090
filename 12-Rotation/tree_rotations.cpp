@@ -46,33 +46,7 @@ void BinarySearchTree::insert(int element) {
 
 
 void BinarySearchTree::pretty_display() {
-	int width = maxHeight(root);
-	std::vector<std::deque<Node*>> tree(width);
-	cout << width << endl;
-	tree[0].push_back(root);
-	for (int i = 1; i < width - 1; ++i) {
-		cout << tree[i - 1].size() << endl;
-		for (int j = 0; j < tree[i - 1].size(); ++j) {
-			cout << i << ' ' << j << '\t' << tree[i - 1][j]->key << endl;
-			if (tree[i - 1][j] == nullptr) {
-				tree[i].push_back(nullptr);
-				tree[i].push_back(nullptr);
-			} else {
-				tree[i].push_back(tree[i - 1][j]->left);
-				tree[i].push_back(tree[i - 1][j]->right);
-			}
-		}
-	}
-	
-	for (auto e1 : tree) {
-		for (auto e2 : e1) {
-			if (e2 == nullptr)
-				cout << ' ';
-			else 
-				cout << e2->key;
-		}
-		cout << endl;
-	}
+	printPretty(root, 1, 0, cout);
 }
 
 
@@ -118,20 +92,8 @@ pivotFamily BinarySearchTree::findFamily(Node *pivot) {
 
 void BinarySearchTree::rotateRight(Node *pivot) {
 	auto fam  = findFamily(pivot);
-	auto root = findParentNode(fam.pivot_parent);
-	if (root->left == fam.pivot_parent) // we are under the left root
-		root->left = fam.pivot;
-	else // we are under the right root
-		root->right = fam.pivot;
-		
-	fam.pivot_parent->right = fam.pivot->left;
-	fam.pivot->left = fam.pivot_parent;
-}
-
-
-void BinarySearchTree::rotateLeft(Node *pivot) {
-	auto fam  = findFamily(pivot);
 	auto root = findParentNode(fam.pivot_parent); // oops, this shadows a member data, oh well
+	
 	if (root->left == fam.pivot_parent) // we are under the left root
 		root->left = fam.pivot;
 	else // we are under the right root
@@ -139,6 +101,20 @@ void BinarySearchTree::rotateLeft(Node *pivot) {
 		
 	fam.pivot_parent->left = fam.pivot->right;
 	fam.pivot->right = fam.pivot_parent;
+}
+
+
+void BinarySearchTree::rotateLeft(Node *pivot) {	
+	auto fam  = findFamily(pivot);
+	auto root = findParentNode(fam.pivot_parent);
+	
+	if (root->left == fam.pivot_parent) // we are under the left root
+		root->left = fam.pivot;
+	else // we are under the right root
+		root->right = fam.pivot;
+	
+	fam.pivot_parent->right = fam.pivot->left;
+	fam.pivot->left = fam.pivot_parent;
 }
 
 
@@ -158,22 +134,69 @@ string BinarySearchTree::intToString(int val) {
 	return std::to_string(val);
 }
 
-
+/// EVERY THING BELOW THIS I COPIED FROM HERE
+// imma get the above code working then worry about this
+// https://articles.leetcode.com/how-to-pretty-print-binary-tree/
 void BinarySearchTree::printBranches(int branchLen, int nodeSpaceLen, int startLen, int nodesInThisLevel, const deque<Node*>& nodesQueue, ostream& out) {
-	
+	  deque<Node*>::const_iterator iter = nodesQueue.begin();
+  for (int i = 0; i < nodesInThisLevel / 2; i++) {  
+    out << ((i == 0) ? setw(startLen-1) : setw(nodeSpaceLen-2)) << "" << ((*iter++) ? "/" : " ");
+    out << setw(2*branchLen+2) << "" << ((*iter++) ? "\\" : " ");
+  }
+  out << endl;
 }
 
 
 void BinarySearchTree::printNodes(int branchLen, int nodeSpaceLen, int startLen, int nodesInThisLevel, const deque<Node*>& nodesQueue, ostream& out) {
-	
+	  deque<Node*>::const_iterator iter = nodesQueue.begin();
+  for (int i = 0; i < nodesInThisLevel; i++, iter++) {
+    out << ((i == 0) ? setw(startLen) : setw(nodeSpaceLen)) << "" << ((*iter && (*iter)->left) ? setfill('_') : setfill(' '));
+    out << setw(branchLen+2) << ((*iter) ? intToString((*iter)->key) : "");
+    out << ((*iter && (*iter)->right) ? setfill('_') : setfill(' ')) << setw(branchLen) << "" << setfill(' ');
+  }
+  out << endl;
 }
 
 
-void printLeaves(int indentSpace, int level, int nodesInThisLevel, const deque<Node*>& nodesQueue, ostream& out) {
-	
+void BinarySearchTree::printLeaves(int indentSpace, int level, int nodesInThisLevel, const deque<Node*>& nodesQueue, ostream& out) {
+	  deque<Node*>::const_iterator iter = nodesQueue.begin();
+  for (int i = 0; i < nodesInThisLevel; i++, iter++) {
+    out << ((i == 0) ? setw(indentSpace+2) : setw(2*level+2)) << ((*iter) ? intToString((*iter)->key) : "");
+  }
+  out << endl;
 }
 
 
-void printPretty(Node *root, int level, int indentSpace, ostream& out) {
-	
+void BinarySearchTree::printPretty(Node *root, int level, int indentSpace, ostream& out) {
+	int h = maxHeight(root);
+  int nodesInThisLevel = 1;
+
+  int branchLen = 2*((int)pow(2.0,h)-1) - (3-level)*(int)pow(2.0,h-1);  // eq of the length of branch for each node of each level
+  int nodeSpaceLen = 2 + (level+1)*(int)pow(2.0,h);  // distance between left neighbor node's right arm and right neighbor node's left arm
+  int startLen = branchLen + (3-level) + indentSpace;  // starting space to the first node to print of each level (for the left most node of each level only)
+    
+  deque<Node*> nodesQueue;
+  nodesQueue.push_back(root);
+  for (int r = 1; r < h; r++) {
+    printBranches(branchLen, nodeSpaceLen, startLen, nodesInThisLevel, nodesQueue, out);
+    branchLen = branchLen/2 - 1;
+    nodeSpaceLen = nodeSpaceLen/2 + 1;
+    startLen = branchLen + (3-level) + indentSpace;
+    printNodes(branchLen, nodeSpaceLen, startLen, nodesInThisLevel, nodesQueue, out);
+
+    for (int i = 0; i < nodesInThisLevel; i++) {
+      Node *currNode = nodesQueue.front();
+      nodesQueue.pop_front();
+      if (currNode) {
+	      nodesQueue.push_back(currNode->left);
+	      nodesQueue.push_back(currNode->right);
+      } else {
+        nodesQueue.push_back(NULL);
+        nodesQueue.push_back(NULL);
+      }
+    }
+    nodesInThisLevel *= 2;
+  }
+  printBranches(branchLen, nodeSpaceLen, startLen, nodesInThisLevel, nodesQueue, out);
+  printLeaves(indentSpace, level, nodesInThisLevel, nodesQueue, out);
 }
