@@ -94,3 +94,29 @@ void Graph::DFS(int vs) {
 	}
 }
 
+
+void Graph::getNewFriends(int vs) {
+	std::unordered_map<int, double> friends;
+	
+	for (auto e1 : vertex_list[vs]->edge_list) { // this is level 1 (already our friend))
+		for (auto e2 : vertex_list[e1->target_vertex]->edge_list) { // this is level 2 (potential friends)
+			friends[e2->target_vertex] += 0.5;
+		
+			for (auto e3 : vertex_list[e2->target_vertex]->edge_list) {
+				friends[e3->target_vertex] += 1/9.0;
+				
+				for (auto e4 : vertex_list[e3->target_vertex]->edge_list) {
+					friends[e4->target_vertex] += 1/16.0;
+				}
+			}
+		}
+	}
+	
+	std::vector<std::pair<int, double>> tmp{friends.begin(), friends.end()};
+	std::sort(tmp.begin(), tmp.end(), [](auto a, auto b) {return a.second > b.second;});
+
+	for (int i = 0; i < ((tmp.size() < 10)? tmp.size() : 10); ++i) {
+		// cout << i << "\t\t";
+		cout << tmp[i].first << '\t' << tmp[i].second << endl;
+	}
+}
