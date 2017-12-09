@@ -5,7 +5,9 @@
 #include <unordered_map>
 #include <algorithm>
 using namespace std;
+
 #include "graph.h"
+#include "ordered_vecmap.hpp"
 
 Graph::Graph(bool insertReverseEdge, ifstream& ifs) 
 : vertex_list{}, num_edges{} {
@@ -96,12 +98,48 @@ void Graph::DFS(int vs) {
 
 
 void Graph::getNewFriends(int vs) {
+	//std::unordered_map<int, double> friends;
+	
+	ari::ordered_vecmap<int, double> friends;
+	
+	/// @todo make this recursive
+	for (auto e1 : vertex_list[vs]->edge_list) { // this is level 1 (already our friend))
+		for (auto e2 : vertex_list[e1->target_vertex]->edge_list) { // this is level 2 (potential friends)
+			//friends[e2->target_vertex] += 0.5;
+			friends.add_to_value(e2->target_vertex, 0.5);
+		
+			for (auto e3 : vertex_list[e2->target_vertex]->edge_list) {
+				// friends[e3->target_vertex] += 1/9.0;
+				friends.add_to_value(e3->target_vertex, 1/9.0);
+				
+				for (auto e4 : vertex_list[e3->target_vertex]->edge_list) {
+					// friends[e4->target_vertex] += 1/16.0;
+					friends.add_to_value(e4->target_vertex, 1/16.0);
+				}
+			}
+		}
+	}
+	
+	// std::vector<std::pair<int, double>> tmp{friends.begin(), friends.end()};
+	// std::sort(tmp.begin(), tmp.end(), [](auto a, auto b) {return a.second > b.second;});
+	auto& tmp = friends.get_results();
+	auto it = tmp.begin();
+	for (int i = 0; i < ((tmp.size() < 10)? tmp.size() : 10); ++i) {
+		// cout << i << "\t\t";
+		cout << it->first << '\t' << it->second << endl;
+		++it;
+	}
+}
+
+
+void Graph::getNewFriends_2(int vs) {
 	std::unordered_map<int, double> friends;
 	
+	/// @todo make this recursive
 	for (auto e1 : vertex_list[vs]->edge_list) { // this is level 1 (already our friend))
 		for (auto e2 : vertex_list[e1->target_vertex]->edge_list) { // this is level 2 (potential friends)
 			friends[e2->target_vertex] += 0.5;
-		
+			
 			for (auto e3 : vertex_list[e2->target_vertex]->edge_list) {
 				friends[e3->target_vertex] += 1/9.0;
 				

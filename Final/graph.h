@@ -48,6 +48,7 @@ class Graph {
 		void DFS(int vs); // Visits nodes depth first
 		
 		void getNewFriends(int vs);
+		void getNewFriends_2(int vs);
 };
 
 #endif
