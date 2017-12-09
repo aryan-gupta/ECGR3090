@@ -68,16 +68,7 @@ public:
 		// mData[mIndex[key]].second = value;
 	// }
 	
-	void add_to_value(const key_type& key, const value_type& val) {
-		// cout << "-------- Start -------------" << endl;
-		// for (auto e : mIndex) {
-			// cout << e.first << " " << &*e.second << endl;
-		// }
-		// for (auto e : mData) {
-			// cout << e.first << " " << e.second << endl;
-		// }
-		// cout << endl << endl;
-		
+	void add_to_value(const key_type& key, const value_type& val) {	
 		// create valuu if not exists
 		if (mIndex.find(key) == mIndex.end()) { // new key-value pair
 			mData.emplace_back(key, 0.0); // insert new value
@@ -91,30 +82,12 @@ public:
 		// fix it so its ordered
 		// while the current value is out of ordered
 		// and we havent reached the max value
+		// also prevents iterator invalidation
 		auto prev = std::prev(idx);
 		while (idx != mData.begin() and idx->second > prev->second) {
-			// std::iter_swap(idx, prev);// we dont want to do an
-			// auto tmp = std::move(*idx);
-			// mData.erase(idx);
-			// mData.insert(prev, tmp);
-			// idx = prev;
-			// --prev;
-			
 			mData.splice(prev, mData, idx);
 			--(--prev);
 		}
-		
-		// update our index
-		// idx contains the new index of the value, now in order
-		// mIndex[key] = idx;
-		
-		// for (auto e : mIndex) {
-			// cout << e.first << " " << &*e.second << endl;
-		// }
-		// for (auto e : mData) {
-			// cout << e.first << " " << e.second << endl;
-		// }
-		// cout << endl << endl;
 	}
 	
 	std::list<std::pair<key_type, value_type>>& get_results() { return mData; }
