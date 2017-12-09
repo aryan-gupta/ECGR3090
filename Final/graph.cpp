@@ -98,28 +98,16 @@ void Graph::DFS(int vs) {
 
 
 void Graph::getNewFriends(int vs) {
-	//std::unordered_map<int, double> friends;
-	
 	ari::ordered_vecmap<int, double> friends{vertex_list.size()};
 	
 	/// @todo make this recursive
 	for (auto e1 : vertex_list[vs]->edge_list) { // this is level 1 (already our friend))
 		for (auto e2 : vertex_list[e1->target_vertex]->edge_list) { // this is level 2 (potential friends)
 			friends.add_to_value(e2->target_vertex, 0.5);
-		}
-	}
-	
-	for (auto e1 : vertex_list[vs]->edge_list) { // this is level 1 (already our friend))
-		for (auto e2 : vertex_list[e1->target_vertex]->edge_list) { // this is level 2 (potential friends)		
+		
 			for (auto e3 : vertex_list[e2->target_vertex]->edge_list) {
 				friends.add_to_value(e3->target_vertex, 1/9.0);
-			}
-		}
-	}
-	
-	for (auto e1 : vertex_list[vs]->edge_list) { // this is level 1 (already our friend))
-		for (auto e2 : vertex_list[e1->target_vertex]->edge_list) { // this is level 2 (potential friends)
-			for (auto e3 : vertex_list[e2->target_vertex]->edge_list) {
+				
 				for (auto e4 : vertex_list[e3->target_vertex]->edge_list) {
 					friends.add_to_value(e4->target_vertex, 1/16.0);
 				}
