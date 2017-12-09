@@ -100,7 +100,7 @@ void Graph::DFS(int vs) {
 void Graph::getNewFriends(int vs) {
 	//std::unordered_map<int, double> friends;
 	
-	ari::ordered_vecmap<int, double> friends;
+	ari::ordered_vecmap<int, double> friends{vertex_list.size()};
 	
 	/// @todo make this recursive
 	for (auto e1 : vertex_list[vs]->edge_list) { // this is level 1 (already our friend))
@@ -122,6 +122,7 @@ void Graph::getNewFriends(int vs) {
 	
 	// std::vector<std::pair<int, double>> tmp{friends.begin(), friends.end()};
 	// std::sort(tmp.begin(), tmp.end(), [](auto a, auto b) {return a.second > b.second;});
+	
 	auto& tmp = friends.get_results();
 	auto it = tmp.begin();
 	for (int i = 0; i < ((tmp.size() < 10)? tmp.size() : 10); ++i) {

@@ -36,37 +36,9 @@ public:
 	using size_type  = size_t;
 	using locator    = typename std::list<std::pair<key_type, value_type>>::iterator;
 	
-	ordered_vecmap() : mIndex{}, mData{} {}
-	
-	// void add_key(const std::pair<key_type, value_type>& pair) { add_key(pair.first, pair.second); }
-	// void add_key(const key_type& key, const value_type& value) {
-		// if (mIndex.find(key) == mIndex.end()) { // new key-value pair
-			// mIndex.add({key, mData.size()}); // add the key so it now points to the last member of the vector
-			// mData.emplace_back(key, 0.0); // insert new value
-		// }
-	// }
-	
-	// std::pair<key_type, value_type>& get_pair(const key_type& key) {
-		// if (mIndex.find(key) == mIndex.end())
-			// throw key_not_found{};
-		
-		// return mData[mIndex[key]];
-	// }
-	
-	// value_type get_value(const key_type& key) {
-		// if (mIndex.find(key) == mIndex.end())
-			// throw key_not_found{};
-		
-		// return mData[mIndex[key]].second;
-	// }
-	
-	// void set_new_value(const std::pair<key_type, value_type>& pair) { set_new_value(pair.first, pair.second); }
-	// void set_new_value(const key_type& key, const value_type& value) {
-		// if (mIndex.find(key) == mIndex.end())
-			// throw key_not_found{};
-		
-		// mData[mIndex[key]].second = value;
-	// }
+	ordered_vecmap(size_type sz) : mIndex{}, mData{} {
+		mIndex.rehash(sz);
+	}
 	
 	void add_to_value(const key_type& key, const value_type& val) {	
 		// create valuu if not exists
