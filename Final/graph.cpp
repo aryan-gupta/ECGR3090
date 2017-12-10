@@ -7,7 +7,6 @@
 using namespace std;
 
 #include "graph.h"
-#include "ordered_vecmap.hpp"
 
 Graph::Graph(bool insertReverseEdge, ifstream& ifs) 
 : vertex_list{}, num_edges{} {
