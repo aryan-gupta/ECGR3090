@@ -31,7 +31,13 @@ Graph::Graph(bool insertReverseEdge, ifstream& ifs)
 }
 
 Graph::~Graph() {
-	
+	for (auto p : vertex_list) {
+		for (auto e : p.second->edge_list) {
+			delete e;
+		}
+		
+		delete p.second->data;
+	}
 }
 
 void Graph::printGraph() {
