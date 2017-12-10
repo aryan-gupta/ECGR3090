@@ -47,9 +47,8 @@ class Graph {
 		void BFS(int vs); // Visits nodes breadth first
 		void DFS(int vs); // Visits nodes depth first
 		
-		void getNewFriends(int vs);
-		
-		void getBestFriends(int vs);
+		std::vector<std::pair<int, double>> getNewFriends(int vs);
+		std::vector<std::pair<int, double>> getBestFriends(int vs);
 };
 
 #endif

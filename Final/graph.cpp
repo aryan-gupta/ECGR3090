@@ -97,7 +97,7 @@ void Graph::DFS(int vs) {
 }
 
 
-void Graph::getNewFriends(int vs) {
+std::vector<std::pair<int, double>> Graph::getNewFriends(int vs) {
 	std::unordered_map<int, double> friends;
 	
 	/// @todo make this recursive
@@ -118,24 +118,42 @@ void Graph::getNewFriends(int vs) {
 	std::vector<std::pair<int, double>> tmp{friends.begin(), friends.end()};
 	std::sort(tmp.begin(), tmp.end(), [](auto a, auto b) {return a.second > b.second;});
 
-	for (int i = 0; i < ((tmp.size() < 10)? tmp.size() : 10); ++i) {
-		// cout << i << "\t\t";
-		cout << tmp[i].first << '\t' << tmp[i].second << endl;
-	}
+	return tmp;
 }
 
 
-void Graph::getBestFriends(int vs) {
-	std::vector<int> bestfriends;
+std::vector<std::pair<int, double>> Graph::getBestFriends(int vs) {
+	std::unordered_map<int, double> bestfriends;
+	
+	for (auto e : vertex_list[vs]->edge_list) {
+		for (auto ef : vertex_list[e->target_vertex]->edge_list) {
+			if (ef->target_vertex == vs)
+				bestfriends[e->target_vertex] += 5;
+		}
+	}
+	
 	for (auto eo : vertex_list[vs]->edge_list) { // level 1 (already friends)
 		for (auto ef : vertex_list[eo->target_vertex]->edge_list) { // level 2 (friend of friend)
 			for (auto efof : vertex_list[ef->target_vertex]->edge_list) { // level 3
-				
+				if (efof->target_vertex == vs)
+					bestfriends[eo->target_vertex] += 1;
 			}
 		}
 	}
 	
-	for (auto i : bestfriends)
-		cout << i << " ";
-	cout << endl;
+	for (auto eo : vertex_list[vs]->edge_list) { // level 1 (already friends)
+		for (auto ef : vertex_list[eo->target_vertex]->edge_list) { // level 2 (friend of friend)
+			for (auto e : vertex_list[vs]->edge_list) { // level 3
+				if (e->target_vertex == ef->target_vertex) {
+					bestfriends[eo->target_vertex] += 1;
+					bestfriends[e->target_vertex] += 1;
+				}
+			}
+		}
+	}
+	
+	std::vector<std::pair<int, double>> tmp{bestfriends.begin(), bestfriends.end()};
+	std::sort(tmp.begin(), tmp.end(), [](auto a, auto b) {return a.second > b.second;});
+
+	return tmp;
 }
