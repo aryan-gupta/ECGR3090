@@ -40,15 +40,7 @@ Graph::~Graph() {
 	}
 }
 
-void Graph::printGraph() {
-	// for (auto v : vertex_list) {
-		// for (auto e : v.second->edge_list) {
-			// cout << v.second->vertex_id << ' ' << e->target_vertex << endl;
-		// }
-	// }
-	
-	// cout << endl;
-	
+void Graph::printGraph() {	
 	for (int i = 0; i < getNumVertices(); ++i) {
 		for (auto e : vertex_list[i]->edge_list) {
 			cout << i << ' ' << e->target_vertex << endl;
