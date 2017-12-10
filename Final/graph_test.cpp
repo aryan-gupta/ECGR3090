@@ -21,5 +21,7 @@ int main()
 	
 	cout << "Time it took was " << time << " ms" << endl;
 	
+	fb.getBestFriends(124);
+	
     return 0;
 }

@@ -123,3 +123,19 @@ void Graph::getNewFriends(int vs) {
 		cout << tmp[i].first << '\t' << tmp[i].second << endl;
 	}
 }
+
+
+void Graph::getBestFriends(int vs) {
+	std::vector<int> bestfriends;
+	for (auto eo : vertex_list[vs]->edge_list) { // level 1 (already friends)
+		for (auto ef : vertex_list[eo->target_vertex]->edge_list) { // level 2 (friend of friend)
+			for (auto efof : vertex_list[ef->target_vertex]->edge_list) { // level 3
+				
+			}
+		}
+	}
+	
+	for (auto i : bestfriends)
+		cout << i << " ";
+	cout << endl;
+}
