@@ -115,12 +115,9 @@ void Graph::getNewFriends(int vs) {
 		}
 	}
 	
-	auto& tmp = friends.get_results();
-	auto it = tmp.begin();
+	auto& tmp = friends.get_results();	
 	for (int i = 0; i < ((tmp.size() < 10)? tmp.size() : 10); ++i) {
-		// cout << i << "\t\t";
-		cout << it->first << '\t' << it->second << endl;
-		++it;
+		cout << tmp[i].first << '\t' << tmp[i].second << endl;
 	}
 }
 

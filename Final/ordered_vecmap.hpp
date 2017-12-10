@@ -41,10 +41,10 @@ public:
 	}
 	
 	void add_to_value(const key_type& key, const value_type& val) {	
-		// create valuu if not exists
+		// create valuu if not exists		
 		if (mIndex.find(key) == mIndex.end()) { // new key-value pair
-			mData.emplace_back(key, 0.0); // insert new value
 			mIndex.insert({key, mData.size()}); // add the key so it now points to the last member of the vector
+			mData.emplace_back(key, 0.0); // insert new value
 		}
 		
 		// add to the value
@@ -55,9 +55,10 @@ public:
 		// while the current value is out of ordered
 		// and we havent reached the max value
 		// also prevents iterator invalidation
-		while (idx != 0 and mData[idx].second > mData[idx - 1].second) {
-			std::swap(mData[idx], mData[idx - 1]);
-			mIndex[mData[idx].first] = idx;
+		auto value = mData[idx].second;
+		while (idx != 0 and value > mData[idx - 1].second) {
+			std::swap(mData[idx], mData[idx - 1]); // swap this an previous
+			mIndex[mData[idx].first] = idx; // fix the previous locator
 			--idx;
 		}
 		
